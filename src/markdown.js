@@ -4,7 +4,7 @@ export function safeHref(raw) {
   const v=String(raw).trim();
   if (!v || /[\x00-\x1f\x7f-\x9f\\]/.test(v)) return null;
   const decoded=v.replace(/&#(?:x([0-9a-f]+)|([0-9]+));?/gi,(_,h,d)=>{const n=parseInt(h??d,h?16:10);return n>0&&n<=0x10ffff?String.fromCodePoint(n):'';}).replace(/&colon;/gi,':').replace(/&tab;/gi,'\t').replace(/&newline;/gi,'\n');
-  if (/[\x00-\x20\x7f-\x9f\\]/.test(decoded) || /^\/\//.test(decoded) || /%(?:0[0-9a-f]|1[0-9a-f]|7f|5c|2f)/i.test(decoded)) return null;
+  if (/[\x00-\x20\x7f-\x9f\\]/.test(decoded) || /^\/\//.test(decoded) || /%(?:0[0-9a-f]|1[0-9a-f]|7f|5c)/i.test(decoded)) return null;
   const protocol=/^([a-z][a-z0-9+.-]*):/i.exec(decoded);
   if (protocol && !/^(https?|mailto)$/i.test(protocol[1])) return null;
   if (!protocol && /^[^/?#]*:/.test(decoded)) return null;
