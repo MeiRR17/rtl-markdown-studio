@@ -6,12 +6,30 @@
   const count = document.querySelector('#editor-count');
   const status = document.querySelector('#workspace-status');
   const toolbar = document.querySelector('.toolbar');
-  if (!editor || !theme || !count || !status || !toolbar) return;
+  const preview = document.querySelector('#preview');
+  if (!editor || !theme || !count || !status || !toolbar || !preview) return;
   const snippets = {
     heading: { prefix: '## ', fallback: 'Heading', suffix: '' },
     list: { prefix: '- ', fallback: 'List item', suffix: '' },
     quote: { prefix: '> ', fallback: 'Quoted text', suffix: '' },
     code: { prefix: '`', fallback: 'code', suffix: '`' }
+  };
+  const emptyHTML = preview.innerHTML;
+  const renderPreview = () => {
+    const value = editor.value;
+    if (!value.trim()) {
+      preview.innerHTML = emptyHTML;
+      status.textContent = 'Ready to write · Add Markdown to see its live preview';
+      return;
+    }
+    if (!window.RTLMarkdown || typeof window.RTLMarkdown.renderMarkdown !== 'function') {
+      preview.textContent = 'Preview unavailable. Reload this local page.';
+      status.textContent = 'Preview unavailable';
+      return;
+    }
+    // The parser escapes raw HTML and only emits allowlisted safe elements.
+    preview.innerHTML = window.RTLMarkdown.renderMarkdown(value);
+    status.textContent = 'Preview up to date';
   };
   const updateCount = () => {
     const length = Array.from(editor.value).length;
@@ -23,7 +41,7 @@
     theme.value = selected;
   };
   theme.addEventListener('change', () => applyTheme(theme.value));
-  editor.addEventListener('input', updateCount);
+  editor.addEventListener('input', () => { updateCount(); renderPreview(); });
   toolbar.addEventListener('click', event => {
     const button = event.target.closest('button[data-insert]');
     if (!button || !toolbar.contains(button)) return;
@@ -35,8 +53,9 @@
     editor.focus();
     editor.setSelectionRange(start + snippet.prefix.length, start + snippet.prefix.length + selected.length);
     editor.dispatchEvent(new Event('input', { bubbles: true }));
-    status.textContent = `${button.textContent.trim()} inserted · Preview rendering not yet enabled`;
+
   });
   applyTheme('system');
   updateCount();
+  renderPreview();
 })();
