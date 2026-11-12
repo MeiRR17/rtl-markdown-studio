@@ -12,9 +12,9 @@ Done when: `index.html` opens directly as a styled, responsive, keyboard-navigab
 ## v2 — Safe Markdown parser
 repo: MeiRR17/rtl-markdown-studio
 after: none
-- [ ] Implement a from-scratch pure Markdown-to-HTML ES module in `src/markdown.js` supporting paragraphs, ATX headings, bold/italic emphasis, safe links, ordered/unordered lists, fenced code blocks, pipe tables and blockquotes.
-- [ ] Escape raw HTML and code content, escape attribute values, and reject active/unsafe link schemes while preserving ordinary http(s), mailto, fragment and relative links.
-- [ ] Add `tests/markdown.test.js` using `node:test` for every supported construct, nested/combined inline content, malformed input and XSS regressions.
+- [x] Implement a from-scratch pure Markdown-to-HTML ES module in `src/markdown.js` supporting paragraphs, ATX headings, bold/italic emphasis, safe links, ordered/unordered lists, fenced code blocks, pipe tables and blockquotes.
+- [x] Escape raw HTML and code content, escape attribute values, and reject active/unsafe link schemes while preserving ordinary http(s), mailto, fragment and relative links.
+- [x] Add `tests/markdown.test.js` using `node:test` for every supported construct, nested/combined inline content, malformed input and XSS regressions.
 Done when: `node --test tests/markdown.test.js` passes on Node 22+ without installed packages and generated markup uses only safe supported elements and attributes.
 
 ## v3 — Bidirectional text rules
