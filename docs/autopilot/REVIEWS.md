@@ -115,3 +115,21 @@ Read `STATUS.md` and `PLAN.md` first, and inspected the actual `autopilot` code 
 1. **Blocking — incorrectly directed Hebrew-first blockquote wrapper:** In `src/markdown.js` and its committed `src/preview-runtime.js` companion, the quote path constructs `<blockquote dir="auto"><p dir="auto">שלום quote</p></blockquote>`. The HTML `dir=auto` first-strong algorithm excludes descendants that have their own valid `dir` value, so the wrapper falls back to LTR while its paragraph is RTL. `styles.css` uses logical border/padding on the wrapper, making the quote decoration appear on the wrong side. Resolve the wrapper direction from quotation text explicitly (while retaining separate paragraph direction), synchronize both renderers, and add a computed-direction regression in `tests/markdown.test.js` or a browser smoke test for Hebrew-first and English-first blockquotes.
 
 **Disposition:** v4 Done when is not fully met; `review_fail`. No unsupported claim of Node CLI/browser success. Earlier review history preserved.
+
+
+### גרסה 4 — ביקורת עצמאית נוספת לאחר רענון הענף (2026-11-12)
+
+**Decision: review_fail. Tests: unknown (no fresh executable suite in this review).**
+
+Read current `STATUS.md` and `PLAN.md` before evaluating already-pushed implementation. Independently inspected `BRIEF.md`, `src/app.js`, `src/markdown.js`, `src/direction.js`, `src/preview-runtime.js`, `index.html`, `styles.css`, `tests/markdown.test.js`, and `tests/direction.test.js` on `autopilot`. Reviewed branch head: `2ca0db5888745bee12f41faaf4912857d6c1dd0f`. No application files were changed.
+
+- **Live update / safety:** The editor's `input` listener calls the escaped renderer synchronously, toolbar insertions dispatch input, and empty content restores instructional guidance. HTML and URL escaping are implemented; preview and English app chrome remain LTR at their containers.
+- **Per-block direction:** Headings, paragraphs, distinct list items and `th`/`td` cells receive independent `dir="auto"` for strong characters or `dir="ltr"` for neutral-only text. Code fences are escaped and styled LTR. The blockquote wrapper remains a counterexample to correct per-block computed direction.
+- **Tests / build:** The repository contains parser and direction tests, including basic quote-output assertions, but no computed-direction regression for the wrapper. Attempting `git ls-remote https://github.com/MeiRR17/rtl-markdown-studio.git refs/heads/autopilot` on Node v22.16.0's local environment failed with `Could not resolve host: github.com`. Consequently no fresh `node --test` run on a checkout or browser computed-style run was completed in this review. No build step is defined for the static app. Earlier V8 replay results are historical, not claimed as fresh evidence.
+- **BRIEF:** The static no-dependencies, English-chrome and offline design is respected in the inspected scope, but the independent direction requirement for quotations remains unmet.
+
+**Numbered blocking gap:**
+
+1. **Hebrew-first blockquote has wrong wrapper direction — `src/markdown.js`, `src/preview-runtime.js`, `styles.css`, `tests/markdown.test.js`.** For `> שלום quote`, the current code emits `<blockquote dir="auto"><p dir="auto">שלום quote</p></blockquote>`. The HTML auto-direction algorithm excludes text in descendants that declare their own `dir`; therefore the enclosing blockquote has no qualifying first-strong text and falls back to the preview container's LTR direction while the paragraph resolves RTL. Because `styles.css` uses `border-inline-start` and logical padding on the blockquote, the quotation's border is on the incorrect side. Derive explicit `rtl`/`ltr` for the outer blockquote from its unformatted quote text while preserving independently directed inner paragraphs; synchronize the classic `preview-runtime.js` companion; test computed direction for both Hebrew-first and English-first quotations in an actual browser.
+
+**Disposition:** `review_fail` until the direction bug is fixed and verified in committed code. This review appends a record without erasing earlier findings, changing implementation, creating a branch or opening a PR.
