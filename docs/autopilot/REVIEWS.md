@@ -40,3 +40,18 @@ Reviewed the current `autopilot` branch's `src/markdown.js`, `tests/markdown.tes
 4. **BRIEF compatibility — PASS:** The module is pure, dependency-free, offline-capable and consistent with the static no-build editor brief. Per-block `dir="auto"` integration belongs to v4 and is not a v2 requirement.
 
 **Disposition:** Previous review_fail item 1 has been corrected and independently verified; previous item 2 has author-recorded Node 22 evidence plus independent execution of all 27 assertions. No v2 source change requested. This supersedes the earlier v2 failure without erasing its audit history.
+
+
+## גרסה 3 — Bidirectional text rules (2026-11-12)
+
+**Decision: review_pass. Tests: pass (7/7, Node v22.16.0).**
+
+Independently inspected branch `autopilot` at source HEAD `739c2e75224cbeb2c8ad389bddee60fe2e94e7c3` against `docs/autopilot/BRIEF.md` and v3 requirements in `PLAN.md`. Inspected the actual contents of `src/direction.js` and `tests/direction.test.js`; no implementation code was changed in this review.
+
+1. **Pure directional utilities — PASS:** `firstStrongDirection(text)` returns `rtl`/`ltr` for the first strong character or null for none; `classifyParagraphDirection(text)` deterministically defaults to `ltr` for no strong character. No DOM, storage, network, package or side-effect dependencies.
+2. **Mixed and neutral input rules — PASS:** Hebrew-first, English-first, punctuation/number prefixes, Arabic-Indic and full-width digits, combining marks, emoji, RTL-script letters and LRM/RLM/ALM handling were examined. First-strong results do not depend on the dominant language, and empty/neutral/numeric-only inputs have stable LTR classification.
+3. **Browser direction documentation — PASS:** Module comments require separate `dir="auto"` on headings, paragraphs, list items, blockquotes and table header/data cells, including nested blockquote paragraphs; they explicitly preserve an LTR English interface. Applying these rules in rendered Markdown is intentionally reserved for v4.
+4. **Node 22 test execution — PASS:** Executed `node --test tests/direction.test.js` on Node v22.16.0: 7 passed, 0 failed. Also executed `node --check` on both files successfully. The test run used locally reconstructed files fetched from branch `autopilot`, because the local runtime could not resolve github.com for a direct git clone. Exact Git blob SHA verification confirms that the executed files are byte-identical to GitHub: `src/direction.js` = `0c01a74dae2bb639db357b7b31f50d400d77f827`; `tests/direction.test.js` = `75ed4aa1ec46e8835a9fe144666b2bcac892d7e3`. No build step is required for this static project.
+5. **BRIEF alignment — PASS for v3 scope:** The logic is dependency-free, compatible with the offline static site and English UI, and supports independent user-text direction without forcing the entire interface RTL. Browser integration is a separate v4 deliverable.
+
+**Disposition:** v3 meets all its stated acceptance conditions; no blocking gaps found.
