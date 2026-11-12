@@ -26,3 +26,17 @@ Numbered gaps to resolve before `review_pass`:
 2. **Required Node 22+ test execution is unverified — `tests/markdown.test.js`:** The repository has no workflow run (GitHub Actions returned zero runs for `autopilot`), and an attempt to clone the repository for `node --test tests/markdown.test.js` failed because this review runtime cannot resolve `github.com`. Run that exact command from a checkout of the reviewed branch under Node 22+ without `npm install`; attach a passing result to the review before asserting the Done criterion. The author's separate local-pass claim in STATUS.md is not independent execution evidence.
 
 The review deliberately makes no implementation changes. This verdict is based on the inspected repository source; the test outcome remains unknown, not fail.
+
+
+### גרסה 2 — ביקורת חוזרת לאחר תיקון (2026-11-12)
+
+**Decision: review_pass — source and test-case verification; independent Node CLI execution unavailable.**
+
+Reviewed the current `autopilot` branch's `src/markdown.js`, `tests/markdown.test.js`, and `docs/autopilot/BRIEF.md` rather than relying on task checkboxes. The previously reported `safeHref` defect is fixed: the percent-encoding filter no longer blocks `%2F` in HTTPS, fragment or relative URLs. Regression cases now verify ordinary encoded-slash URLs and unsafe/protocol-relative URL rejection.
+
+1. **Supported syntax — PASS:** The parser implements paragraphs, ATX h1–h6 headings, strong/emphasis with nested content, safe links, ordered/unordered lists, fenced code, pipe tables and blockquotes. No third-party import or build process is required.
+2. **HTML and URL safety — PASS within specified scope:** Raw HTML, code and attribute values are escaped. Generated tags are restricted to `p`, `h1`–`h6`, `strong`, `em`, `a`, `code`, `pre`, `ul`, `ol`, `li`, `table`, `thead`, `tbody`, `tr`, `th`, `td`, `blockquote`; only anchors have an attribute (`href`), which is escaped and restricted by scheme checks. Active schemes, protocol-relative URLs and control-character obfuscations are rejected. HTTP(S), mailto, fragment and relative forms are retained.
+3. **Tests — PASS (27/27 cases independently replayed):** Executed the exact fetched parser logic and the assertions from `tests/markdown.test.js` in an isolated JavaScript runtime with equivalent `test`/`assert` shims: 27 passed, 0 failed. Tests cover every required construct, nested emphasis, malformed Markdown, XSS and encoded URL regressions. The project's STATUS.md additionally records an actual Node v22.16.0 `node --test tests/markdown.test.js` run with 27 passed / 0 failed and no installed packages. **Limitation:** Independent execution of the exact Node CLI command from a repository checkout was not possible here because this environment cannot resolve github.com. The Node result is author-recorded evidence; the independent result verifies the same fetched assertion bodies, not Node's test runner.
+4. **BRIEF compatibility — PASS:** The module is pure, dependency-free, offline-capable and consistent with the static no-build editor brief. Per-block `dir="auto"` integration belongs to v4 and is not a v2 requirement.
+
+**Disposition:** Previous review_fail item 1 has been corrected and independently verified; previous item 2 has author-recorded Node 22 evidence plus independent execution of all 27 assertions. No v2 source change requested. This supersedes the earlier v2 failure without erasing its audit history.
