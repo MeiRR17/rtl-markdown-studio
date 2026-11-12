@@ -1,3 +1,4 @@
+import { firstStrongDirection } from './direction.js';
 /** Dependency-free Markdown renderer: untrusted input never becomes raw HTML. */
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 export function safeHref(raw) {
@@ -42,6 +43,9 @@ function inline(s, depth=0) {
   }
   return out;
 }
+// Browser dir=auto uses visible first-strong text, independently for each block.
+// A deterministic LTR fallback prevents numeric-only text inheriting RTL context.
+const directionAttribute = text => ' dir="' + (firstStrongDirection(text) ? 'auto' : 'ltr') + '"';
 const fence=s=>/^ {0,3}(`{3,}|~{3,})(.*)$/.exec(s);
 const heading=s=>/^ {0,3}(#{1,6})(?:[ \t]+(.*)|[ \t]*)$/.exec(s);
 const quote=s=>/^ {0,3}>[ \t]?(.*)$/.exec(s);
@@ -65,7 +69,7 @@ function table(lines,i){
 }
 function begins(lines,i){return !!(fence(lines[i])||heading(lines[i])||quote(lines[i])||(item(lines[i])&&!rule(lines[i]))||table(lines,i));}
 function blocks(lines,level=0){
-  if(level>12)return '<p>'+inline(lines.join(' '))+'</p>';
+  if(level>12)return '<p'+directionAttribute(lines.join(' '))+'>'+inline(lines.join(' '))+'</p>';
   const out=[];
   for(let i=0;i<lines.length;){
     const line=lines[i];
@@ -79,17 +83,17 @@ function blocks(lines,level=0){
       out.push('<pre><code>'+esc(code.join('\n'))+'</code></pre>');continue;
     }
     const h=heading(line);
-    if(h){const tag='h'+h[1].length;out.push('<'+tag+'>'+inline((h[2]??'').replace(/[ \t]+#+[ \t]*$/,'').trim())+'</'+tag+'>');i++;continue;}
+    if(h){const tag='h'+h[1].length;{const content=(h[2]??'').replace(/[ \t]+#+[ \t]*$/,'').trim();out.push('<'+tag+directionAttribute(content)+'>'+inline(content)+'</'+tag+'>');}i++;continue;}
     if(quote(line)){
       const q=[];while(i<lines.length&&quote(lines[i]))q.push(quote(lines[i++])[1]);
-      out.push('<blockquote>'+blocks(q,level+1)+'</blockquote>');continue;
+      out.push('<blockquote'+directionAttribute(q.join(' '))+'>'+blocks(q,level+1)+'</blockquote>');continue;
     }
     const headers=table(lines,i);
     if(headers){
       i+=2;const body=[];
       while(i<lines.length&&lines[i].trim()&&lines[i].includes('|'))body.push(cells(lines[i++]));
-      const head='<thead><tr>'+headers.map(x=>'<th>'+inline(x)+'</th>').join('')+'</tr></thead>';
-      const rows=body.length?'<tbody>'+body.map(row=>'<tr>'+headers.map((_,k)=>'<td>'+inline(row[k]??'')+'</td>').join('')+'</tr>').join('')+'</tbody>':'';
+      const head='<thead><tr>'+headers.map(x=>'<th'+directionAttribute(x)+'>'+inline(x)+'</th>').join('')+'</tr></thead>';
+      const rows=body.length?'<tbody>'+body.map(row=>'<tr>'+headers.map((_,k)=>'<td'+directionAttribute(row[k]??'')+'>'+inline(row[k]??'')+'</td>').join('')+'</tr>').join('')+'</tbody>':'';
       out.push('<table>'+head+rows+'</table>');continue;
     }
     const first=item(line);
@@ -99,13 +103,13 @@ function blocks(lines,level=0){
         const it=item(lines[i]);if(!it||/\d/.test(it[2][0])!==ordered||rule(lines[i]))break;
         const text=[it[3]];i++;
         while(i<lines.length&&/^ {2,}\S/.test(lines[i])&&!item(lines[i]))text.push(lines[i++].trim());
-        li.push('<li>'+inline(text.join(' '))+'</li>');
+        li.push('<li'+directionAttribute(text.join(' '))+'>'+inline(text.join(' '))+'</li>');
       }
       const tag=ordered?'ol':'ul';out.push('<'+tag+'>'+li.join('')+'</'+tag+'>');continue;
     }
     const p=[line.trim()];i++;
     while(i<lines.length&&lines[i].trim()&&!begins(lines,i))p.push(lines[i++].trim());
-    out.push('<p>'+inline(p.join(' '))+'</p>');
+    out.push('<p'+directionAttribute(p.join(' '))+'>'+inline(p.join(' '))+'</p>');
   }
   return out.join('\n');
 }
