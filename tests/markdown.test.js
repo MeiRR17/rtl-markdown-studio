@@ -36,3 +36,12 @@ test('XSS across blocks',()=>{
  assert.match(html,/&lt;script&gt;/);
 });
 test('empty input',()=>{assert.equal(md(''),'');assert.equal(md(null),'');});
+test('percent-encoded slashes remain valid in HTTPS and relative URLs',()=>{
+  for(const href of ['https://example.com/a%2Fb','https://example.com/a%2fb?q=1','/docs/a%2Fb','./a%2Fb','../a%2Fb','folder%2Ffile.md','#part%2Ftwo']) {
+    assert.equal(safeHref(href),href);
+    assert.equal(md('[go]('+href+')'),'<p><a href="'+href+'">go</a></p>');
+  }
+});
+test('encoded slash cannot bypass unsafe schemes or protocol-relative checks',()=>{
+  for(const href of ['javascript:%2F%2Fevil','data:text/html,%2F%2F','//evil.example/path%2Ffile'])assert.equal(safeHref(href),null);
+});
