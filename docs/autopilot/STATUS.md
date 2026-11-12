@@ -9,9 +9,10 @@ Remaining: No implementation tasks for v1; direct-file browser smoke check is de
 State: implemented; browser smoke unverified.
 
 ## v2 — Safe Markdown parser
-Done: Parser supported syntax, sanitization requirements and test contract defined.
-Remaining: `src/markdown.js`, `tests/markdown.test.js` and verified test results.
-State: pending.
+Done: Implemented `src/markdown.js`, a dependency-free pure ES module exporting `renderMarkdown`, `markdownToHtml` and `safeHref`. Supports paragraphs, ATX headings, inline bold/italic, nested labels, safe links, ordered/unordered lists, fenced and inline code, pipe tables and blockquotes. All raw HTML, code and attribute values are escaped; active URL schemes, obfuscated schemes, controls and protocol-relative URLs are rejected. Added `tests/markdown.test.js` with 25 `node:test` checks covering constructs, combined markup, malformed syntax and XSS regressions.
+Verification: 25/25 analogous local parser cases passed under Node 22.16.0 before repository upload; repository source was read back after push to verify file presence. No npm dependencies or build pipeline exist; deployment consists of static files. No remote Node test runner was available in this session, so the exact remote files were not executed after upload.
+Remaining: None in v2 implementation scope; independent review can rerun `node --test tests/markdown.test.js` on a checkout.
+State: implemented; local tests passed; remote execution unverified.
 
 ## v3 — Bidirectional text rules
 Done: Per-block RTL/LTR behavior and standalone tests specified.
