@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {renderMarkdown as md, markdownToHtml, safeHref} from '../src/markdown.js';
+import {renderMarkdown, markdownToHtml, safeHref} from '../src/markdown.js';
+// Retain v2 structure assertions; v4 direction assertions below cover new attributes.
+const md = source => renderMarkdown(source).replace(/ dir="(?:auto|ltr|rtl)"/g, '');
 const cases=[
 ['paragraph','hello\nworld','<p>hello world</p>'],
 ['headings','# One\n## **Two**\n###### Six','<h1>One</h1>\n<h2><strong>Two</strong></h2>\n<h6>Six</h6>'],
@@ -44,4 +46,23 @@ test('percent-encoded slashes remain valid in HTTPS and relative URLs',()=>{
 });
 test('encoded slash cannot bypass unsafe schemes or protocol-relative checks',()=>{
   for(const href of ['javascript:%2F%2Fevil','data:text/html,%2F%2F','//evil.example/path%2Ffile'])assert.equal(safeHref(href),null);
+});
+
+test('independent direction for headings paragraphs quotes and list items', () => {
+ const html=renderMarkdown('# שלום Hello\n## Hello שלום\n\n(42) עברית\n\n> שלום quote\n\n- English ראשון\n- עברית second');
+ assert.match(html, /<h1 dir="auto">שלום Hello<\/h1>/);
+ assert.match(html, /<h2 dir="auto">Hello שלום<\/h2>/);
+ assert.match(html, /<blockquote dir="auto"><p dir="auto">שלום quote<\/p><\/blockquote>/);
+ assert.match(html, /<ul><li dir="auto">English ראשון<\/li><li dir="auto">עברית second<\/li><\/ul>/);
+});
+test('independent table cells and neutral text', () => {
+ const html=renderMarkdown('| שלום | English | 123 |\n| --- | --- | --- |\n| Hello עברית | עברית English | ... |');
+ assert.match(html, /<th dir="auto">שלום<\/th><th dir="auto">English<\/th><th dir="ltr">123<\/th>/);
+ assert.match(html, /<td dir="auto">Hello עברית<\/td><td dir="auto">עברית English<\/td><td dir="ltr">\.\.\.<\/td>/);
+});
+test('safe links markup and code fences with direction', () => {
+ const html=renderMarkdown('[שלום](https://example.com?q=1) and English\n\n```html\n<script>alert(1)</script>\n```');
+ assert.match(html, /<p dir="auto"><a href="https:\/\/example.com\?q=1">שלום<\/a> and English<\/p>/);
+ assert.match(html, /<pre><code>&lt;script&gt;alert\(1\)&lt;\/script&gt;<\/code><\/pre>/);
+ assert.doesNotMatch(html, /<script>/);
 });
