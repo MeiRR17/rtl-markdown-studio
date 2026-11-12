@@ -28,9 +28,9 @@ Done when: `node --test tests/direction.test.js` passes on Node 22+ and module b
 ## v4 — Live preview and per-block direction
 repo: MeiRR17/rtl-markdown-studio
 after: v1, v2, v3
-- [ ] Connect editor input to the parser from `src/app.js` so the preview updates immediately and safely for every edit; provide meaningful empty-state guidance rather than placeholder sections.
-- [ ] Integrate `src/direction.js` in `src/markdown.js` (or its rendering boundary) so each rendered heading, paragraph, list item, blockquote and `th`/`td` independently receives `dir="auto"` or an equivalent correct computed direction.
-- [ ] Update `index.html`, `styles.css` and parser tests as necessary to ensure mixed-direction text, punctuation, link labels, lists, tables and code fences render legibly without changing English UI flow.
+- [x] Connect editor input to the parser from `src/app.js` so the preview updates immediately and safely for every edit; provide meaningful empty-state guidance rather than placeholder sections.
+- [x] Integrate `src/direction.js` in `src/markdown.js` (or its rendering boundary) so each rendered heading, paragraph, list item, blockquote and `th`/`td` independently receives `dir="auto"` or an equivalent correct computed direction.
+- [x] Update `index.html`, `styles.css` and parser tests as necessary to ensure mixed-direction text, punctuation, link labels, lists, tables and code fences render legibly without changing English UI flow.
 Done when: editing supported Markdown immediately changes an HTML preview and different Hebrew-first/English-first blocks—including separate list items and table cells—display with independently correct direction.
 
 ## v5 — Local autosave core
