@@ -9,10 +9,11 @@ Remaining: No implementation tasks for v1; direct-file browser smoke check is de
 State: implemented; browser smoke unverified.
 
 ## v2 — Safe Markdown parser
-Done: Implemented `src/markdown.js`, a dependency-free pure ES module exporting `renderMarkdown`, `markdownToHtml` and `safeHref`. Supports paragraphs, ATX headings, inline bold/italic, nested labels, safe links, ordered/unordered lists, fenced and inline code, pipe tables and blockquotes. All raw HTML, code and attribute values are escaped; active URL schemes, obfuscated schemes, controls and protocol-relative URLs are rejected. Added `tests/markdown.test.js` with 25 `node:test` checks covering constructs, combined markup, malformed syntax and XSS regressions.
-Verification: 25/25 analogous local parser cases passed under Node 22.16.0 before repository upload; repository source was read back after push to verify file presence. No npm dependencies or build pipeline exist; deployment consists of static files. No remote Node test runner was available in this session, so the exact remote files were not executed after upload.
-Remaining: None in v2 implementation scope; independent review can rerun `node --test tests/markdown.test.js` on a checkout.
-State: implemented; local tests passed; remote execution unverified.
+Done: Implemented `src/markdown.js`, a dependency-free ES module exposing `renderMarkdown`, `markdownToHtml`, and `safeHref`; covers paragraphs, ATX headings, emphasis, safe links, ordered/unordered lists, fenced code blocks, pipe tables and blockquotes with HTML and attribute escaping. Added `tests/markdown.test.js` with 27 Node tests, including XSS and malformed-input cases.
+Review remediation (2026-11-12): Fixed `safeHref` so valid percent-encoded slashes (`%2F` / `%2f`) survive in HTTPS, relative and fragment URLs. Two new regression tests verify accepted paths and continued rejection of dangerous schemes/protocol-relative links.
+Verification: Actual `node --test tests/markdown.test.js` on a reconstructed checkout of the v2 files, Node v22.16.0, 27 passed / 0 failed, no installed packages. `node --check src/markdown.js` also passed. No build command or build configuration exists: this is a static no-build project. Direct GitHub cloning failed locally due to DNS, so the checkout was reconstructed from the connector-fetched branch files; the exact command was not run on a git-cloned tree.
+Remaining: No v2 implementation tasks; reviewer may independently repeat tests from GitHub.
+State: version implemented and patched; Node 22 tests pass; awaiting independent review.
 
 ## v3 — Bidirectional text rules
 Done: Per-block RTL/LTR behavior and standalone tests specified.
