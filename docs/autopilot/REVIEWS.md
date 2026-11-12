@@ -55,3 +55,18 @@ Independently inspected branch `autopilot` at source HEAD `739c2e75224cbeb2c8ad3
 5. **BRIEF alignment — PASS for v3 scope:** The logic is dependency-free, compatible with the offline static site and English UI, and supports independent user-text direction without forcing the entire interface RTL. Browser integration is a separate v4 deliverable.
 
 **Disposition:** v3 meets all its stated acceptance conditions; no blocking gaps found.
+
+
+## גרסה 4 — Live preview and per-block direction (2026-11-12)
+
+**Decision: review_fail. Tests: pass (37/37 source test cases in independent JavaScript V8 replay); Node CLI/browser smoke: unverified.**
+
+Independent inspection of the actual `autopilot` branch: `docs/autopilot/BRIEF.md`, `PLAN.md`, `DECISIONS.md`, `src/app.js`, `src/direction.js`, `src/markdown.js`, `src/preview-runtime.js`, `index.html`, `styles.css`, `tests/markdown.test.js`, and `tests/direction.test.js`. No application code changed in this review.
+
+Verified: `src/app.js` subscribes to editor `input`, immediately invokes `window.RTLMarkdown.renderMarkdown`, refreshes the preview/status, and updates on toolbar insertion; an instructional empty state exists. The renderer escapes raw HTML and code and restricts links. Heading, paragraph, individual list items, and individual `th`/`td` receive their own `dir="auto"` or neutral `dir="ltr"`; the English application frame remains LTR. The committed classic `src/preview-runtime.js` contains the same core renderer/helper implementations as the canonical ES modules, supporting the `file://` design. Replayed the 30 Markdown tests and seven direction tests on the fetched source in an isolated JavaScript V8 harness: 37 passed, zero failed. Also directly rendered mixed Hebrew/English headings, list items, table cells, safe links and escaped fenced HTML. These checks are **not** a browser-based computed-style test or an actual `node --test` invocation; GitHub cloning was unavailable owing to DNS restrictions. There is no build step in this static project.
+
+### Numbered blocking gaps
+
+1. **Hebrew-first blockquote wrapper resolves to LTR despite `dir="auto"` — `src/markdown.js`, `src/preview-runtime.js`, `styles.css`, `tests/markdown.test.js`:** Rendering `> שלום quote` produces `<blockquote dir="auto"><p dir="auto">שלום quote</p></blockquote>`. HTML automatic direction determination skips text under descendants that themselves have a valid `dir` attribute; therefore the enclosing `blockquote` finds no first strong text and resolves to LTR, even though its nested paragraph resolves RTL. The blockquote's `border-inline-start` and `padding-inline` consequently appear on the LTR side. This violates the requirement that each blockquote independently display with correct direction. Resolve the quote wrapper explicitly from the first-strong text (for example `dir="rtl"`/`dir="ltr"` on `blockquote` while retaining independently directed nested paragraphs), or restructure direction ownership so the outer wrapper's auto algorithm can see the relevant text. Keep the canonical ES module and direct-file companion in sync; add a browser-level computed-direction regression for Hebrew-first and English-first blockquotes rather than only matching the presence of `dir="auto"`.
+
+**Disposition:** `review_fail` until blocker 1 is fixed and verified on the branch. All other inspected v4 requirements appear implemented; the deferred autosave/export work is outside v4 scope. No code or other version documentation was modified by this reviewer.
