@@ -3,9 +3,10 @@
 Overall: **Planning complete; implementation not started.** Branch: `autopilot`. Repository initially contained only a minimal `README.md`; no application implementation, tests, license or release evidence was present when this plan was created. All eight versions are pending, with **0/8 completed**. No implementation tests have been run.
 
 ## v1 — Static interface shell
-Done: Scope, file ownership and acceptance criterion defined in PLAN.md.
-Remaining: `index.html`, `styles.css`, `src/app.js`, responsive UI, theme switch and author footer.
-State: pending.
+Done: Added root `index.html` (semantic English controls, editor, formatting toolbar, preview guidance, theme selector, live status, linked author footer), `styles.css` (light/dark/system palettes, desktop two-pane layout, stacked mobile rules, focus visibility and bidi-friendly text) and `src/app.js` (theme switching, character count and keyboard-operable Markdown insertion controls). All three files have been committed to `autopilot`.
+Verification: JavaScript syntax check passed on Node 22. Static assets are all relative; no packages, build system or remote resources are required. Automated browser smoke testing was attempted but the execution environment blocked navigation to both file:// and localhost, so interactive browser acceptance remains unverified in this environment.
+Remaining: No implementation tasks for v1; direct-file browser smoke check is deferred to a browser without this environment restriction.
+State: implemented; browser smoke unverified.
 
 ## v2 — Safe Markdown parser
 Done: Parser supported syntax, sanitization requirements and test contract defined.
