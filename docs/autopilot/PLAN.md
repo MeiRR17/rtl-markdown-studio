@@ -4,9 +4,9 @@
 ## v1 — Static interface shell
 repo: MeiRR17/rtl-markdown-studio
 after: none
-- [ ] Create root `index.html` with semantic English-language editor, preview, toolbar, theme control, status text and linked author footer; use only relative local assets and native controls.
-- [ ] Create `styles.css` with polished responsive two-pane desktop layout, usable stacked mobile layout, light/dark palettes, visible keyboard focus, and bidirectional-friendly typography.
-- [ ] Create `src/app.js` as the browser entry module to wire accessible initial controls and theme choice without any external dependency.
+- [x] Create root `index.html` with semantic English-language editor, preview, toolbar, theme control, status text and linked author footer; use only relative local assets and native controls.
+- [x] Create `styles.css` with polished responsive two-pane desktop layout, usable stacked mobile layout, light/dark palettes, visible keyboard focus, and bidirectional-friendly typography.
+- [x] Create `src/app.js` as the browser entry module to wire accessible initial controls and theme choice without any external dependency.
 Done when: `index.html` opens directly as a styled, responsive, keyboard-navigable local page with working light/dark control and the required footer; no remote requests, npm or build step are needed.
 
 ## v2 — Safe Markdown parser
