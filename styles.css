@@ -78,3 +78,16 @@ select { background: var(--surface); border: 1px solid var(--line); color: var(-
 @media (prefers-reduced-motion: no-preference) {
   button, a, select { transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
 }
+
+/* v4: isolate user-authored blocks without changing English application chrome. */
+.preview-content { direction: ltr; overflow-x: auto; }
+.preview-content :is(h1,h2,h3,h4,h5,h6,p,li,blockquote,th,td) { text-align: start; unicode-bidi: isolate; }
+.preview-content :is(pre,code) { direction: ltr; unicode-bidi: isolate; }
+.preview-content pre { overflow-x: auto; padding: 1rem; border-radius: .7rem; background: var(--soft); white-space: pre; }
+.preview-content code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.preview-content :not(pre) > code { background: var(--soft); padding: .12em .3em; border-radius: .25rem; }
+.preview-content table { border-collapse: collapse; width: 100%; max-width: 100%; }
+.preview-content th, .preview-content td { border: 1px solid var(--line); padding: .6rem .75rem; vertical-align: top; }
+.preview-content th { background: var(--soft); }
+.preview-content blockquote { margin-inline: 0; padding-inline: 1rem; border-inline-start: .25rem solid var(--accent); color: var(--subtle); }
+.preview-content a { unicode-bidi: isolate; }
