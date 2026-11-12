@@ -22,9 +22,10 @@ Remaining: No v3 implementation tasks. Integration into Markdown rendering and b
 State: implemented, tested and committed to `autopilot`.
 
 ## v4 — Live preview and per-block direction
-Done: Integration dependencies and acceptance criterion defined.
-Remaining: Live rendering, independent block/list-item/cell direction and rendering regression tests; requires v1, v2 and v3.
-State: pending.
+Done: Connected synchronous editor and formatting-toolbar input to safe Markdown rendering in `src/app.js`; added actionable empty guidance and updated live status. `src/markdown.js` now applies independent direction metadata to headings, paragraphs, blockquotes (including nested paragraphs), list items, table headers and table cells using `src/direction.js` first-strong detection. Neutral-only blocks resolve LTR. Added direct-file-compatible `src/preview-runtime.js`, an inline classic-script companion generated from the parser/direction source, avoiding blocked file:// module imports. Updated `index.html`, `styles.css` for code isolation, RTL/LTR block alignment, responsive tables and reading typography; added v4 parser regression assertions. English UI direction remains LTR.
+Verification: Code committed to `autopilot`. The environment cannot clone the repository (GitHub DNS unavailable); a direct repo-wide Node test/build run on the actual branch was not verified. The static project intentionally has no build script. An unrelated `node --test` invocation outside a project checkout is not evidence of this repository's status.
+Remaining: Run `node --test tests/*.test.js` on a complete checkout and verify direct-file live input manually; review generated classic runtime parity if parser changes.
+State: implementation pushed; verification pending.
 
 ## v5 — Local autosave core
 Done: Storage interface, failure handling and test cases specified.
