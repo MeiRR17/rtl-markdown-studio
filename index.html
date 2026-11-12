@@ -7,6 +7,7 @@
 <meta name="description" content="An offline-first Markdown workspace for Hebrew and English writing.">
 <title>RTL Markdown Studio</title>
 <link rel="stylesheet" href="./styles.css">
+<script src="./src/preview-runtime.js" defer></script>
 <script src="./src/app.js" defer></script>
 </head>
 <body data-theme="system">
@@ -27,9 +28,9 @@
 <section class="panel preview-panel" aria-labelledby="preview-title">
   <div class="panel-header"><div><span class="section-kicker">02 / Read</span><h2 id="preview-title">Preview</h2></div><span class="panel-tag">Reading view</span></div>
   <div id="preview" class="preview-content" role="region" aria-label="Rendered Markdown preview" aria-describedby="preview-help">
-    <div class="empty-state"><span class="empty-symbol" aria-hidden="true">¶</span><h3>Made for words in both directions.</h3><p id="preview-help">Write Markdown on the left. A formatted, direction-aware preview will appear here when rendering is enabled.</p><p class="example" dir="auto">שלום עולם · Hello world</p></div>
+    <div class="empty-state"><span class="empty-symbol" aria-hidden="true">¶</span><h3>Made for words in both directions.</h3><p id="preview-help">Start with a heading (# Title), a list (- Item), or a paragraph. Hebrew and English blocks will flow independently.</p><p class="example" dir="auto">שלום עולם · Hello world</p></div>
   </div>
-  <div class="panel-bottom preview-bottom"><p id="workspace-status" role="status" aria-live="polite">Ready to write · Preview rendering not yet enabled</p></div>
+  <div class="panel-bottom preview-bottom"><p id="workspace-status" role="status" aria-live="polite">Ready to write · Add Markdown to see its live preview</p></div>
 </section>
 </main>
 <footer class="site-footer"><p>Thoughtfully made for Hebrew + English.</p><p>Built by <a href="https://github.com/MeiRR17" rel="noopener noreferrer">Meir Dvir</a></p></footer>
