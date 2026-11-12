@@ -16,9 +16,10 @@ Remaining: No v2 implementation tasks; reviewer may independently repeat tests f
 State: version implemented and patched; Node 22 tests pass; awaiting independent review.
 
 ## v3 — Bidirectional text rules
-Done: Per-block RTL/LTR behavior and standalone tests specified.
-Remaining: `src/direction.js`, `tests/direction.test.js` and verified test results.
-State: pending.
+Done: Added pure ES module `src/direction.js` with `firstStrongDirection` (first Unicode strong RTL/LTR character or null) and `classifyParagraphDirection` (deterministic LTR fallback for empty, punctuation-only and numeric-only text). It handles Hebrew/English mixtures, common RTL scripts, Unicode combining marks, emoji, Arabic-Indic digits, and explicit LRM/RLM/ALM markers. Module comments specify independent browser `dir="auto"` placement for headings, paragraphs, list items, blockquotes and table cells while retaining LTR English interface chrome. Added `tests/direction.test.js` with seven independent test cases.
+Verification: On Node v22.16.0, `node --test tests/direction.test.js` passed 7/7 with 0 failures; `node --check` passed for both files. No build command is defined or needed for this dependency-free static site. Direct GitHub cloning from the local test environment failed due to blocked DNS; the byte-identical test/source files were validated against their Git blob SHAs before publication.
+Remaining: No v3 implementation tasks. Integration into Markdown rendering and browser preview belongs to v4.
+State: implemented, tested and committed to `autopilot`.
 
 ## v4 — Live preview and per-block direction
 Done: Integration dependencies and acceptance criterion defined.

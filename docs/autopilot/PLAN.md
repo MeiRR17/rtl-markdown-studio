@@ -20,9 +20,9 @@ Done when: `node --test tests/markdown.test.js` passes on Node 22+ without insta
 ## v3 — Bidirectional text rules
 repo: MeiRR17/rtl-markdown-studio
 after: none
-- [ ] Create `src/direction.js` with pure utilities that classify paragraph-level text direction using the first strong directional character and handle neutral/numeric-only text deterministically.
-- [ ] Create `tests/direction.test.js` covering Hebrew-first, English-first, mixed strings, punctuation, digits and empty inputs.
-- [ ] Specify in module comments how the browser's `dir="auto"` behavior applies separately to headings, paragraphs, list items, blockquotes and table cells without forcing the English interface RTL.
+- [x] Create `src/direction.js` with pure utilities that classify paragraph-level text direction using the first strong directional character and handle neutral/numeric-only text deterministically.
+- [x] Create `tests/direction.test.js` covering Hebrew-first, English-first, mixed strings, punctuation, digits and empty inputs.
+- [x] Specify in module comments how the browser's `dir="auto"` behavior applies separately to headings, paragraphs, list items, blockquotes and table cells without forcing the English interface RTL.
 Done when: `node --test tests/direction.test.js` passes on Node 22+ and module behavior is deterministic for mixed Hebrew/English and neutral-only inputs.
 
 ## v4 — Live preview and per-block direction
