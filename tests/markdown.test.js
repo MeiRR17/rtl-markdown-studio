@@ -25,7 +25,7 @@ const cases=[
 ['multiple blocks','# Title\n\nParagraph\n\n- a','<h1>Title</h1>\n<p>Paragraph</p>\n<ul><li>a</li></ul>'],
 ];
 for(const [name,input,expected] of cases)test(name,()=>assert.equal(md(input),expected));
-test('alias and purity',()=>{assert.equal(markdownToHtml('A'),'<p>A</p>');assert.equal(md('A'),md('A'));});
+test('alias and purity',()=>{assert.equal(markdownToHtml('A'),'<p dir="auto">A</p>');assert.equal(md('A'),md('A'));});
 test('safe links',()=>{for(const href of ['https://example.com','http://example.com','mailto:a@b.com','#part','./file','../file','/doc','docs/page'])assert.equal(safeHref(href),href);});
 test('dangerous schemes and obfuscation',()=>{
  for(const href of ['javascript:alert(1)','data:text/html,x','vbscript:x','//evil.example','java&#x73;cript:evil','java\tscript:evil','https://site/%0aevil','file:///etc/passwd'])
