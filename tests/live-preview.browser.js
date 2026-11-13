@@ -154,6 +154,13 @@
   check('Code with edge backticks preserves literal delimiters',
     editor.value === '`` `code` ``' &&
     preview.querySelector('p code')?.textContent === '`code`');
+  input('| A | B |\n| --- | --- |\n| ``a|b`` | שלום |');
+  const codePipeCells = preview.querySelectorAll('tbody td');
+  check('double-backtick code pipes remain inside one table cell',
+    codePipeCells.length === 2 &&
+    codePipeCells[0].querySelector('code')?.textContent === 'a|b' &&
+    codePipeCells[1].textContent === 'שלום' &&
+    getComputedStyle(codePipeCells[1]).direction === 'rtl');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
