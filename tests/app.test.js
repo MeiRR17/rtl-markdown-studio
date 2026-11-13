@@ -237,7 +237,8 @@ test('Code formats multiline selections as fenced blocks without changing select
   const cases = [
     ['first\nשני', '```\nfirst\nשני\n```', 'first\nשני'],
     ['a\n```\nb', '````\na\n```\nb\n````', 'a\n```\nb'],
-    ['first\nsecond\n', '```\nfirst\nsecond\n```', 'first\nsecond\n']
+    ['first\nsecond\n', '```\nfirst\nsecond\n\n```', 'first\nsecond\n'],
+    ['first\nשני\n\n', '```\nfirst\nשני\n\n\n```', 'first\nשני\n\n']
   ];
   for (const [source, expected, selected] of cases) {
     const app = mount(source);
