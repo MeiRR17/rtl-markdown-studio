@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>v4 live-preview browser regression</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>body { padding: 1rem; } #results { white-space: pre-wrap; } .preview-content { min-height: 0; }</style>
+  <script defer src="../src/preview-runtime.js"></script>
+  <script defer src="../src/app.js"></script>
+  <script defer src="live-preview.browser.js"></script>
+</head>
+<body>
+  <h1>v4 live-preview regression</h1>
+  <label for="theme">Theme</label>
+  <select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+  <div class="toolbar"><button type="button" data-insert="quote">Quote</button></div>
+  <label for="editor">Markdown source</label>
+  <textarea id="editor"></textarea>
+  <output id="editor-count"></output>
+  <section id="preview" class="preview-content" aria-label="Live preview">
+    <div class="empty-state"><p>Start writing</p></div>
+  </section>
+  <output id="workspace-status" role="status"></output>
+  <pre id="results" role="status">Running tests…</pre>
+</body>
+</html>
