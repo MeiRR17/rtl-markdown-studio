@@ -116,6 +116,12 @@
     editor.value === '- Alpha\n\n- Beta' &&
     preview.querySelectorAll('li').length === 2 &&
     !Array.from(preview.querySelectorAll('li')).some(item => !item.textContent.trim()));
+  input('Existing\n\nLast');
+  editor.setSelectionRange(9, 9);
+  document.querySelector('.toolbar button[data-insert="heading"]').click();
+  check('Heading creates a placeholder at a blank-line caret',
+    editor.value === 'Existing\n## Heading\nLast' &&
+    preview.querySelector('h2')?.textContent === 'Heading');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
