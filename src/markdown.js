@@ -26,26 +26,33 @@ function inline(s, depth=0) {
     const c=s[i];
     if(c==='\\' && i+1<s.length && /[\\`*_{}\[\]()#+.!>|~-]/.test(s[i+1])) {out+=esc(s[i+1]);i+=2;continue;}
     if(c==='`') {
-      const mark=/^`+/.exec(s.slice(i))[0];
-      // Closing runs must match the opening length exactly; find the
-      // first eligible run by binary search instead of rescanning text.
-      const runs=codeRuns.get(mark.length)||[];
-      const threshold=i+mark.length;
-      let lo=0,hi=runs.length;
-      while(lo<hi){
-        const mid=(lo+hi)>>1;
-        if(runs[mid]<threshold)lo=mid+1;
-        else hi=mid;
-      }
-      const end=lo<runs.length?runs[lo]:-1;
-      if(end!==-1){
-          let codeText=s.slice(i+mark.length,end).replace(/\n/g,' ');
-          // CommonMark-style padding: one pair of edge spaces separates
-          // literal backticks from the delimiters without altering display.
-          if(codeText.startsWith(' ') && codeText.endsWith(' ') && codeText.trim())
-            codeText=codeText.slice(1,-1);
-          out+='<code>'+esc(codeText)+'</code>';i=end+mark.length;continue;
+      // Find the whole opening run only once. An unmatched long run may
+      // contain a shorter suffix that has a real closing run; choose the
+      // longest matching suffix without rescanning the same prefix.
+      let runEnd=i+1;
+      while(s[runEnd]==='`')runEnd++;
+      const fullLength=runEnd-i;
+      let close=-1,openLength=0;
+      for(let length=fullLength;length>0;length--){
+        const runs=codeRuns.get(length);
+        if(!runs)continue;
+        let lo=0,hi=runs.length;
+        while(lo<hi){
+          const mid=(lo+hi)>>1;
+          if(runs[mid]<runEnd)lo=mid+1;
+          else hi=mid;
         }
+        if(lo<runs.length){close=runs[lo];openLength=length;break;}
+      }
+      if(close!==-1){
+        out+='`'.repeat(fullLength-openLength);
+        let codeText=s.slice(runEnd,close).replace(/\n/g,' ');
+        if(codeText.startsWith(' ') && codeText.endsWith(' ') && codeText.trim())
+          codeText=codeText.slice(1,-1);
+        out+='<code>'+esc(codeText)+'</code>';
+        i=close+openLength;continue;
+      }
+      out+=s.slice(i,runEnd);i=runEnd;continue;
     }
     if(c==='[') {
       let j=i+1,n=1;
