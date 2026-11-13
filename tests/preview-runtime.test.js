@@ -43,3 +43,15 @@ test('browser companion matches neutral-link direction in RTL quotation', () => 
   assert.equal(browser.window.RTLMarkdown.renderMarkdown(source), renderMarkdown(source));
  assert.match(browser.window.RTLMarkdown.renderMarkdown(examples[0]), /<p dir="ltr"><a /);
 });
+
+test('browser and canonical renderers agree on variable-length inline Code fences', () => {
+ const samples = [
+  '`` `code` ``',
+  '```Use ``code`` here```',
+  '```js\nhello\n```'
+ ];
+ for (const source of samples)
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(source), renderMarkdown(source));
+ assert.match(renderMarkdown(samples[1]), /<p dir="auto"><code>Use ``code`` here<\/code><\/p>/);
+ assert.match(renderMarkdown(samples[2]), /^<pre><code>hello<\/code><\/pre>$/);
+});
