@@ -63,3 +63,11 @@ test('browser companion preserves table pipes within double-backtick spans', () 
  assert.match(html, /<td dir="auto"><code>a\|b<\/code><\/td>/);
  assert.equal((html.match(/<td /g)||[]).length,2);
 });
+
+test('browser companion matches exact inline Code backtick runs', () => {
+ for (const input of ['`a``b`','``a```b``','``a`b``']) {
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(input), renderMarkdown(input));
+  const table='| A | B |\n| --- | --- |\n| '+input+' | שלום |';
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(table), renderMarkdown(table));
+ }
+});
