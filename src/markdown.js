@@ -84,8 +84,19 @@ function cells(line){
       let j=i+1;
       while(source[j]==='`')j++;
       const run=j-i;
-      if(!codeFence)codeFence=run;
-      else if(codeFence===run)codeFence=0;
+      if(!codeFence){
+        // An unmatched opening run is literal text, not a code span.
+        // Only shield pipes when a closing run of the same length exists.
+        let closing=false;
+        for(let k=j;k<source.length;){
+          if(source[k]!=='`'){k++;continue;}
+          let end=k+1;
+          while(source[end]==='`')end++;
+          if(end-k===run){closing=true;break;}
+          k=end;
+        }
+        if(closing)codeFence=run;
+      }else if(codeFence===run)codeFence=0;
       v+=source.slice(i,j);i=j;continue;
     }
     if(c==='|'&&!codeFence){out.push(v.trim());v='';}
