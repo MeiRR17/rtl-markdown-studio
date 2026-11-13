@@ -115,3 +115,18 @@ test('Code spans preserve literal edge backticks and embedded runs', () => {
  for (const [input, expected] of cases)
   assert.equal(md(input), expected, input);
 });
+
+test('table pipes inside variable-length code spans do not split cells', () => {
+ const cases=[
+  ['``a|b``','<code>a|b</code>'],
+  ['``a`|`b``','<code>a`|`b</code>'],
+  ['`a|b`','<code>a|b</code>'],
+  ['a\\|b','a|b']
+ ];
+ for(const [cell,expected] of cases){
+  const html=renderMarkdown('| A | B |\n| --- | --- |\n| '+cell+' | שלום |');
+  assert.ok(html.includes('<td dir="auto">'+expected+'</td>'), cell);
+  assert.match(html, /<td dir="auto">שלום<\/td>/);
+  assert.equal((html.match(/<td /g)||[]).length,2,cell);
+ }
+});
