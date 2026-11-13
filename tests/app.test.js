@@ -210,6 +210,21 @@ test('Inline Code toolbar remains selection-local', () => {
   assert.equal(app.editor.value, '`Hello`');
 });
 
+test('Code selects a delimiter longer than any existing backtick run', () => {
+  const examples = [
+    ['Use `code` here', '``Use `code` here``'],
+    ['Use ``code`` here', '```Use ``code`` here```'],
+    ['plain text', '`plain text`']
+  ];
+  for (const [source, expected] of examples) {
+    const app = mount(source);
+    app.click('code', 0, source.length);
+    assert.equal(app.editor.value, expected);
+    assert.equal(app.editor.selectionStart, expected.length - source.length - (expected.length - source.length) / 2);
+    assert.equal(app.editor.selectionEnd, app.editor.selectionStart + source.length);
+  }
+});
+
 test('other toolbar snippets and theme selection keep working', () => {
   const app = mount('Hello');
   app.click('heading', 0, 5);
