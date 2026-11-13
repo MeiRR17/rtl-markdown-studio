@@ -84,9 +84,12 @@
         ? '`'.repeat(runs.reduce((max, run) => Math.max(max, run.length), 0) + 1)
         : snippet.prefix;
       const suffix = button.dataset.insert === 'code' ? fence : snippet.suffix;
-      // Padding keeps a selected edge backtick from merging with the fence.
+      // Padding separates edge backticks from the fence and preserves
+      // meaningful leading/trailing spaces: Markdown removes one outer pair
+      // from nonblank code spans when both edges contain spaces.
       const pad = button.dataset.insert === 'code' &&
-        (selected.startsWith('`') || selected.endsWith('`'));
+        (selected.startsWith('`') || selected.endsWith('`') ||
+          (selected.startsWith(' ') && selected.endsWith(' ') && !!selected.trim()));
       const inner = pad ? ' ' + selected + ' ' : selected;
       editor.setRangeText(`${fence}${inner}${suffix}`, start, end, 'select');
       editor.focus();
