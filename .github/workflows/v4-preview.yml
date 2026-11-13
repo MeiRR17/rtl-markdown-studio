@@ -41,17 +41,18 @@ jobs:
           "$browser" --headless --no-sandbox --disable-gpu \
             --disable-dev-shm-usage --virtual-time-budget=5000 \
             --dump-dom "file://$PWD/tests/blockquote.browser.html" > "$output"
+          # Capture evidence even if an assertion fails, so CI failures are diagnosable.
+          "$browser" --headless --no-sandbox --disable-gpu \
+            --disable-dev-shm-usage --virtual-time-budget=5000 \
+            --window-size=1100,800 \
+            --screenshot="$PWD/v4-browser-regression.png" \
+            "file://$PWD/tests/blockquote.browser.html"
           if ! grep -q 'data-failures="0"' "$output" || ! grep -q 'data-executed="5"' "$output"; then
             echo "::error::Computed-style blockquote regression did not pass"
             grep -E 'data-failures=|FAIL:|Running tests' "$output" || true
             exit 1
           fi
           echo "Computed-style blockquote tests passed in $browser"
-          "$browser" --headless --no-sandbox --disable-gpu \
-            --disable-dev-shm-usage --virtual-time-budget=5000 \
-            --window-size=1100,800 \
-            --screenshot="$PWD/v4-browser-regression.png" \
-            "file://$PWD/tests/blockquote.browser.html"
       - name: Publish browser regression screenshot
         if: always()
         uses: actions/upload-artifact@v4
