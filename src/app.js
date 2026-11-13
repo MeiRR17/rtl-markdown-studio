@@ -58,7 +58,10 @@
       const lineBreak = editor.value.indexOf('\n', lastTouched);
       const lineEnd = lineBreak === -1 ? editor.value.length : lineBreak;
       const replacement = editor.value.slice(lineStart, lineEnd)
-        .split('\n').map(line => snippet.prefix + line).join('\n');
+        // Preserve blank separators for headings/lists; only quotes should
+        // explicitly prefix empty lines to keep a contiguous blockquote.
+        .split('\n').map(line => line.length || button.dataset.insert === 'quote'
+          ? snippet.prefix + line : line).join('\n');
       editor.setRangeText(replacement, lineStart, lineEnd, 'select');
       editor.focus();
       editor.setSelectionRange(lineStart, lineStart + replacement.length);
