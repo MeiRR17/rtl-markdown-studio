@@ -35,6 +35,19 @@
   check('clearing restores empty guidance',
     preview.textContent.includes('Start writing') &&
     status.textContent.includes('Ready to write'));
+  input('Hello');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="quote"]').click();
+  check('toolbar Quote action updates source and preview',
+    editor.value === '> Hello' &&
+    preview.querySelector('blockquote')?.textContent === 'Hello' &&
+    getComputedStyle(preview.querySelector('blockquote')).direction === 'ltr');
+  const theme = document.getElementById('theme');
+  theme.value = 'dark';
+  theme.dispatchEvent(new Event('change', { bubbles: true }));
+  check('theme switching keeps the editor and preview intact',
+    document.body.dataset.theme === 'dark' &&
+    preview.querySelector('blockquote')?.textContent === 'Hello');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
