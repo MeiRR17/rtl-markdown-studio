@@ -152,3 +152,17 @@ test('inline Code closes only at matching backtick-run lengths', () => {
   assert.equal((table.match(/<td /g)||[]).length,2,input);
  }
 });
+
+test('trailing escaped table pipes remain visible in Hebrew cells', () => {
+ const examples = [
+  ['שלום\\|', 'שלום|'],
+  ['שלום\\\\|', 'שלום\\'],
+  ['שלום |', 'שלום'],
+  ['שלום\\| |', 'שלום|']
+ ];
+ for (const [cell, expected] of examples) {
+  const html = renderMarkdown('| Name | Note |\n| --- | --- |\n| English | '+cell);
+  assert.ok(html.includes('<td dir="auto">'+expected+'</td>'), cell);
+  assert.equal((html.match(/<td /g) || []).length, 2, cell);
+ }
+});
