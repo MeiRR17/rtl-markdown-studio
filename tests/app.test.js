@@ -233,6 +233,28 @@ test('Code selects a delimiter longer than any existing backtick run', () => {
   }
 });
 
+test('Code formats multiline selections as fenced blocks without changing selected text', () => {
+  const cases = [
+    ['first\nשני', '```\nfirst\nשני\n```', 'first\nשני'],
+    ['a\n```\nb', '````\na\n```\nb\n````', 'a\n```\nb'],
+    ['first\nsecond\n', '```\nfirst\nsecond\n```', 'first\nsecond\n']
+  ];
+  for (const [source, expected, selected] of cases) {
+    const app = mount(source);
+    app.click('code', 0, source.length);
+    assert.equal(app.editor.value, expected);
+    assert.equal(app.editor.value.slice(app.editor.selectionStart, app.editor.selectionEnd), selected);
+    assert.equal(app.preview.innerHTML, '<rendered>' + expected + '</rendered>');
+  }
+});
+
+test('multiline Code selection starts a separate fence when surrounded by text', () => {
+  const source = 'prefix first\nשני suffix';
+  const app = mount(source);
+  app.click('code', 7, source.length - 7);
+  assert.equal(app.editor.value, 'prefix \n```\nfirst\nשני\n```\n suffix');
+  assert.equal(app.editor.value.slice(app.editor.selectionStart, app.editor.selectionEnd), 'first\nשני');
+});
 test('other toolbar snippets and theme selection keep working', () => {
   const app = mount('Hello');
   app.click('heading', 0, 5);
