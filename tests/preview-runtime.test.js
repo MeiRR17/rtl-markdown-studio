@@ -55,3 +55,11 @@ test('browser and canonical renderers agree on variable-length inline Code fence
  assert.match(renderMarkdown(samples[1]), /<p dir="auto"><code>Use ``code`` here<\/code><\/p>/);
  assert.match(renderMarkdown(samples[2]), /^<pre><code>hello<\/code><\/pre>$/);
 });
+
+test('browser companion preserves table pipes within double-backtick spans', () => {
+ const source='| A | B |\n| --- | --- |\n| ``a|b`` | שלום |';
+ const html=browser.window.RTLMarkdown.renderMarkdown(source);
+ assert.equal(html,renderMarkdown(source));
+ assert.match(html, /<td dir="auto"><code>a\|b<\/code><\/td>/);
+ assert.equal((html.match(/<td /g)||[]).length,2);
+});
