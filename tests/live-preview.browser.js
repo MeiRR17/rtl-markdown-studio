@@ -184,6 +184,12 @@
     escapedTickCells.length === 2 &&
     escapedTickCells[0].querySelector('code')?.textContent === 'a|b' &&
     escapedTickCells[1].textContent === 'שלום');
+  input('| A | B |\n| --- | --- |\n| ``x|y` | שלום |');
+  const unmatchedOpenerCells = preview.querySelectorAll('tbody td');
+  check('shorter Code suffix keeps table pipe inside one cell',
+    unmatchedOpenerCells.length === 2 &&
+    unmatchedOpenerCells[0].querySelector('code')?.textContent === 'x|y' &&
+    unmatchedOpenerCells[1].textContent === 'שלום');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
