@@ -71,3 +71,10 @@ test('browser companion matches exact inline Code backtick runs', () => {
   assert.equal(browser.window.RTLMarkdown.renderMarkdown(table), renderMarkdown(table));
  }
 });
+
+test('browser companion preserves escaped trailing pipes in Hebrew table cells', () => {
+ for (const cell of ['שלום\\|','שלום\\\\|','שלום |','שלום\\| |']) {
+  const md='| Name | Note |\n| --- | --- |\n| English | '+cell;
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(md),renderMarkdown(md),cell);
+ }
+});
