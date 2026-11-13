@@ -8,6 +8,7 @@ on:
       - 'src/direction.js'
       - 'src/preview-runtime.js'
       - 'src/app.js'
+      - 'scripts/build-preview-runtime.js'
       - 'index.html'
       - 'styles.css'
       - 'tests/**'
