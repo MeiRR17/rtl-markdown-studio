@@ -74,12 +74,23 @@ const quote=s=>/^ {0,3}>[ \t]?(.*)$/.exec(s);
 const item=s=>/^( {0,3})([-+*]|\d{1,9}[.)])[ \t]+(.*)$/.exec(s);
 const rule=s=>/^ {0,3}(?:\*\s*){3,}$|^ {0,3}(?:-\s*){3,}$|^ {0,3}(?:_\s*){3,}$/.test(s);
 function cells(line){
-  let out=[],v='',slash=false,code=false;
-  for(const c of line.trim().replace(/^\|/,'').replace(/\|$/,'')){
-    if(slash){v+='\\'+c;slash=false;continue;}
-    if(c==='\\'){slash=true;continue;}
-    if(c==='`')code=!code;
-    if(c==='|'&&!code){out.push(v.trim());v='';}else v+=c;
+  let out=[],v='',slash=false,codeFence=0;
+  const source=line.trim().replace(/^\|/,'').replace(/\|$/,'');
+  for(let i=0;i<source.length;){
+    const c=source[i];
+    if(slash){v+='\\'+c;slash=false;i++;continue;}
+    if(c==='\\'){slash=true;i++;continue;}
+    if(c==='`'){
+      let j=i+1;
+      while(source[j]==='`')j++;
+      const run=j-i;
+      if(!codeFence)codeFence=run;
+      else if(codeFence===run)codeFence=0;
+      v+=source.slice(i,j);i=j;continue;
+    }
+    if(c==='|'&&!codeFence){out.push(v.trim());v='';}
+    else v+=c;
+    i++;
   }
   if(slash)v+='\\';
   out.push(v.trim());return out;
