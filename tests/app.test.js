@@ -215,6 +215,11 @@ test('Code selects a delimiter longer than any existing backtick run', () => {
     ['Use `code` here', '``Use `code` here``'],
     ['Use ``code`` here', '```Use ``code`` here```'],
     ['plain text', '`plain text`'],
+    [' hello ', '`  hello  `'],
+    ['  שלום  ', '`   שלום   `'],
+    [' hello', '` hello`'],
+    ['hello ', '`hello `'],
+    ['   ', '`   `'],
     ['`code`', '`` `code` ``'],
     ['`start', '`` `start ``'],
     ['end`', '`` end` ``']
