@@ -66,6 +66,21 @@ function inline(s, depth=0) {
     if(!codeRuns.has(length))codeRuns.set(length,[]);
     codeRuns.get(length).push(match.index);
   }
+  // Precompute nested link delimiters so incomplete Markdown never
+  // rescans the remainder of the line for every unmatched '[' or '('.
+  const closingBrackets=new Map(),openBrackets=[];
+  for(let p=0;p<s.length;p++){
+    if(s[p]==='\\'){p++;continue;}
+    if(s[p]==='[')openBrackets.push(p);
+    else if(s[p]===']'&&openBrackets.length)
+      closingBrackets.set(openBrackets.pop(),p);
+  }
+  const closingParens=new Map(),openParens=[];
+  for(let p=0;p<s.length;p++){
+    if(s[p]==='(')openParens.push(p);
+    else if(s[p]===')'&&openParens.length)
+      closingParens.set(openParens.pop(),p);
+  }
   for(let i=0;i<s.length;) {
     const c=s[i];
     if(c==='\\' && i+1<s.length && /[\\`*_{}\[\]()#+.!>|~-]/.test(s[i+1])) {out+=esc(s[i+1]);i+=2;continue;}
@@ -99,12 +114,15 @@ function inline(s, depth=0) {
       out+=s.slice(i,runEnd);i=runEnd;continue;
     }
     if(c==='[') {
-      let j=i+1,n=1;
-      while(j<s.length && n) {if(s[j]==='\\'){j+=2;continue;}if(s[j]==='[')n++;if(s[j]===']')n--;j++;}
-      if(!n && s[j]==='('){
-        let k=j+1,p=1;
-        while(k<s.length&&p){if(s[k]==='(')p++;if(s[k]===')')p--;k++;}
-        if(!p){const label=s.slice(i+1,j-1),href=safeHref(s.slice(j+1,k-1));out+=href===null?inline(label,depth+1):'<a href="'+esc(href)+'">'+inline(label,depth+1)+'</a>';i=k;continue;}
+      const close=closingBrackets.get(i);
+      const parenStart=close===undefined?-1:close+1;
+      if(parenStart!==-1&&s[parenStart]==='('){
+        const parenEnd=closingParens.get(parenStart);
+        if(parenEnd!==undefined){
+          const label=s.slice(i+1,close),href=safeHref(s.slice(parenStart+1,parenEnd));
+          out+=href===null?inline(label,depth+1):'<a href="'+esc(href)+'">'+inline(label,depth+1)+'</a>';
+          i=parenEnd+1;continue;
+        }
       }
     }
     if(c==='*'||c==='_') {
