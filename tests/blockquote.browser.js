@@ -40,5 +40,6 @@
   const failures = messages.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = messages.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
+  results.dataset.executed = String(messages.length);
   document.title = (failures ? 'FAIL' : 'PASS') + ' — v4 blockquote computed style';
 })();
