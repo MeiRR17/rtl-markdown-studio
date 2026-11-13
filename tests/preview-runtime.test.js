@@ -133,3 +133,14 @@ test('browser companion handles 12000 unclosed ticks and shorter suffixes', () =
   assert.equal(browser.window.RTLMarkdown.renderMarkdown(source),renderMarkdown(source));
  }
 });
+
+test('browser companion keeps indexed bracket matching equivalent', () => {
+ for (const markdown of [
+  'Start '+'['.repeat(6000)+' שלום',
+  '[שלום](https://example.com/a(b)c)',
+  '[Nested [שלום]](https://example.com)',
+  '[bracket \\] text](https://example.com)'
+ ]) {
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(markdown), renderMarkdown(markdown));
+ }
+});
