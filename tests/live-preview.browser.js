@@ -216,6 +216,12 @@
     editor.value === '```\nfirst\nשני\n\n```' &&
     preview.querySelector('pre[dir="ltr"] code')?.textContent === 'first\nשני\n' &&
     editor.value.slice(editor.selectionStart, editor.selectionEnd) === 'first\nשני\n');
+  const unmatchedLongCode = '`'.repeat(4096);
+  input('Prefix ' + unmatchedLongCode + ' שלום');
+  check('long unmatched inline Code remains literal in live preview',
+    preview.querySelectorAll('code').length === 0 &&
+    preview.querySelector('p')?.textContent === 'Prefix ' + unmatchedLongCode + ' שלום' &&
+    status.textContent === 'Preview up to date');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
