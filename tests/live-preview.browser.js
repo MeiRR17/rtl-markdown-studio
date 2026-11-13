@@ -48,6 +48,24 @@
   check('theme switching keeps the editor and preview intact',
     document.body.dataset.theme === 'dark' &&
     preview.querySelector('blockquote')?.textContent === 'Hello');
+  input('- שלום English\n- English עברית');
+  const listItems = preview.querySelectorAll('li');
+  check('list items resolve independent direction',
+    listItems.length === 2 &&
+    getComputedStyle(listItems[0]).direction === 'rtl' &&
+    getComputedStyle(listItems[1]).direction === 'ltr');
+  input('| שלום | English |\n| --- | --- |\n| English | עברית |');
+  const headings = preview.querySelectorAll('th');
+  const cells = preview.querySelectorAll('td');
+  check('table cells resolve independent direction',
+    headings.length === 2 && cells.length === 2 &&
+    getComputedStyle(headings[0]).direction === 'rtl' &&
+    getComputedStyle(headings[1]).direction === 'ltr' &&
+    getComputedStyle(cells[0]).direction === 'ltr' &&
+    getComputedStyle(cells[1]).direction === 'rtl');
+  check('English editor chrome stays LTR',
+    getComputedStyle(document.body).direction === 'ltr' &&
+    getComputedStyle(document.querySelector('.toolbar')).direction === 'ltr');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
