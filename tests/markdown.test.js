@@ -93,3 +93,13 @@ test('blockquote direction ignores hidden Markdown link URLs and escaped entitie
  for(const [markdown, direction] of cases)
   assert.match(renderMarkdown(markdown), new RegExp('^<blockquote dir="'+direction+'">'), markdown);
 });
+
+test('neutral link labels ignore invisible URL letters inside RTL quotations', () => {
+ const html=renderMarkdown('> שלום\n> \n> [123](https://english.example)');
+ assert.match(html, /<blockquote dir="rtl">/);
+ assert.match(html, /<p dir="ltr"><a href="https:\/\/english\.example">123<\/a><\/p>/);
+ const arabicUrl=renderMarkdown('[123](https://שלום.example)');
+ assert.match(arabicUrl, /^<p dir="ltr"><a /);
+ const visible=renderMarkdown('[שלום](https://example.com)');
+ assert.match(visible, /^<p dir="auto"><a /);
+});
