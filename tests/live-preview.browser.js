@@ -196,6 +196,12 @@
     getComputedStyle(preview.querySelector('blockquote')).direction === 'rtl' &&
     nestedFencedCode?.getAttribute('dir') === 'ltr' &&
     getComputedStyle(nestedFencedCode).direction === 'ltr');
+  input(' שלום ');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="code"]').click();
+  check('Code toolbar preserves selected outer spaces in preview',
+    editor.value === '`  שלום  `' &&
+    preview.querySelector('p code')?.textContent === ' שלום ');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
