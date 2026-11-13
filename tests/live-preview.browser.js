@@ -74,6 +74,23 @@
     preview.querySelectorAll('blockquote p').length === 1 &&
     preview.querySelector('blockquote')?.textContent.includes('English second') &&
     getComputedStyle(preview.querySelector('blockquote')).direction === 'rtl');
+  input('שלום first');
+  editor.setSelectionRange(4, 4);
+  document.querySelector('.toolbar button[data-insert="quote"]').click();
+  check('Quote at cursor quotes the complete current line',
+    editor.value === '> שלום first' &&
+    preview.querySelector('blockquote')?.textContent === 'שלום first');
+  input('prefix One\nEnglish second\nuntouched third');
+  editor.setSelectionRange(4, 19);
+  document.querySelector('.toolbar button[data-insert="quote"]').click();
+  check('partial multiline selection quotes complete touched lines only',
+    editor.value === '> prefix One\n> English second\nuntouched third' &&
+    preview.querySelector('blockquote')?.textContent.includes('English second'));
+  input('first\nsecond\nthird');
+  editor.setSelectionRange(2, 6);
+  document.querySelector('.toolbar button[data-insert="quote"]').click();
+  check('selection ending at next line start leaves that line untouched',
+    editor.value === '> first\nsecond\nthird');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
