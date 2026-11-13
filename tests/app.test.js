@@ -159,6 +159,19 @@ test('Heading and List preserve empty separators while Quote keeps them', () => 
   }
 });
 
+test('Heading and List create placeholders at a caret on an empty line', () => {
+  for (const [action, fallback] of [
+    ['heading', '## Heading'],
+    ['list', '- List item']
+  ]) {
+    const app = mount('Existing\n\nLast');
+    app.click(action, 9);
+    assert.equal(app.editor.value, 'Existing\n' + fallback + '\nLast');
+    assert.equal(app.editor.selectionStart, 9);
+    assert.equal(app.editor.selectionEnd, 9 + fallback.length);
+  }
+});
+
 test('Inline Code toolbar remains selection-local', () => {
   const app = mount('Hello');
   app.click('code', 0, 5);
