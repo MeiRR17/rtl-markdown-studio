@@ -128,6 +128,12 @@
   check('List leaves whitespace-only separators unchanged',
     editor.value === '- Alpha\n   \n- Beta' &&
     preview.querySelectorAll('li').length === 2);
+  input('Existing\n\nLast');
+  editor.setSelectionRange(9, 9);
+  document.querySelector('.toolbar button[data-insert="quote"]').click();
+  check('Quote creates a placeholder at an empty-line caret',
+    editor.value === 'Existing\n> Quoted text\nLast' &&
+    preview.querySelector('blockquote')?.textContent === 'Quoted text');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
