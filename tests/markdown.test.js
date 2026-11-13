@@ -189,3 +189,15 @@ test('backslashes inside Code spans do not escape table syntax', () => {
   assert.match(html, /<td dir="auto">שלום<\/td>/);
  }
 });
+
+test('escaped first backtick leaves remaining run active inside tables', () => {
+ for (const [source,code] of [
+  ['\\``a|b`', '<code>a|b</code>'],
+  ['\\```a|b``', '<code>a|b</code>']
+ ]) {
+  const html=renderMarkdown('| A | B |\n| --- | --- |\n| '+source+' | שלום |');
+  assert.ok(html.includes('<td dir="auto">`'+code+'</td>'),source);
+  assert.match(html, /<td dir="auto">שלום<\/td>/);
+  assert.equal((html.match(/<td /g)||[]).length,2,source);
+ }
+});
