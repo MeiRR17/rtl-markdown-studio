@@ -109,6 +109,13 @@
   check('Code remains inline rather than line-prefix formatting',
     editor.value === '`Hello code`' &&
     preview.querySelector('p code')?.textContent === 'Hello code');
+  input('Alpha\n\nBeta');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="list"]').click();
+  check('List preserves blank paragraph separators',
+    editor.value === '- Alpha\n\n- Beta' &&
+    preview.querySelectorAll('li').length === 2 &&
+    !Array.from(preview.querySelectorAll('li')).some(item => !item.textContent.trim()));
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
