@@ -125,6 +125,33 @@ test('Quote handles empty documents and blank interior lines', () => {
   assert.equal(app.editor.value, '> a\n> \n> b');
 });
 
+test('Heading and List apply at line starts for a mid-line caret', () => {
+  const heading = mount('Hello world');
+  heading.click('heading', 3);
+  assert.equal(heading.editor.value, '## Hello world');
+  assert.equal(heading.preview.innerHTML, '<rendered>## Hello world</rendered>');
+  const list = mount('שלום list');
+  list.click('list', 3);
+  assert.equal(list.editor.value, '- שלום list');
+});
+
+test('List formatting respects full touched lines and an exclusive end boundary', () => {
+  const app = mount('One\nTwo\nThree');
+  app.click('list', 2, 6);
+  assert.equal(app.editor.value, '- One\n- Two\nThree');
+  assert.equal(app.editor.selectionStart, 0);
+  assert.equal(app.editor.selectionEnd, '- One\n- Two'.length);
+  const other = mount('First\nSecond');
+  other.click('list', 1, 6);
+  assert.equal(other.editor.value, '- First\nSecond');
+});
+
+test('Inline Code toolbar remains selection-local', () => {
+  const app = mount('Hello');
+  app.click('code', 0, 5);
+  assert.equal(app.editor.value, '`Hello`');
+});
+
 test('other toolbar snippets and theme selection keep working', () => {
   const app = mount('Hello');
   app.click('heading', 0, 5);
