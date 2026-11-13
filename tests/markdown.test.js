@@ -215,3 +215,16 @@ test('table parser retries unmatched backtick openers at shorter lengths', () =>
   assert.match(html, /<td dir="auto">שלום<\/td>/);
  }
 });
+
+test('fenced code remains LTR inside independently RTL blockquotes', () => {
+ const examples = [
+  '> שלום\n> ```js\n> const value = (1 + 2);\n> ```',
+  '> שלום\n> ~~~\n> console.log(123)\n> ~~~'
+ ];
+ for(const source of examples){
+  const html=renderMarkdown(source);
+  assert.match(html, /^<blockquote dir="rtl">/);
+  assert.match(html, /<pre dir="ltr"><code>/);
+  assert.match(html, /<\/code><\/pre><\/blockquote>$/);
+ }
+});
