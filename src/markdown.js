@@ -86,7 +86,7 @@ function blocks(lines,level=0){
     if(h){const tag='h'+h[1].length;{const content=(h[2]??'').replace(/[ \t]+#+[ \t]*$/,'').trim();out.push('<'+tag+directionAttribute(content)+'>'+inline(content)+'</'+tag+'>');}i++;continue;}
     if(quote(line)){
       const q=[];while(i<lines.length&&quote(lines[i]))q.push(quote(lines[i++])[1]);
-      out.push('<blockquote'+directionAttribute(q.join(' '))+'>'+blocks(q,level+1)+'</blockquote>');continue;
+      out.push('<blockquote dir="'+(firstStrongDirection(q.join(' ')) ?? 'ltr')+'">'+blocks(q,level+1)+'</blockquote>');continue;
     }
     const headers=table(lines,i);
     if(headers){
