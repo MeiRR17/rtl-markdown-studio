@@ -164,7 +164,7 @@ function blocks(lines,level=0){
       const end=new RegExp('^ {0,3}'+(mark[0]==='`'?'`':'~')+'{'+mark.length+',}[ \\t]*$');
       while(i<lines.length&&!end.test(lines[i]))code.push(lines[i++]);
       if(i<lines.length)i++;
-      out.push('<pre><code>'+esc(code.join('\n'))+'</code></pre>');continue;
+      out.push('<pre dir="ltr"><code>'+esc(code.join('\n'))+'</code></pre>');continue;
     }
     const h=heading(line);
     if(h){const tag='h'+h[1].length;{const content=(h[2]??'').replace(/[ \t]+#+[ \t]*$/,'').trim();out.push('<'+tag+directionAttribute(content)+'>'+inline(content)+'</'+tag+'>');}i++;continue;}
