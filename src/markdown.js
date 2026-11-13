@@ -14,21 +14,30 @@ export function safeHref(raw) {
 function inline(s, depth=0) {
   if(depth>16) return esc(s);
   let out=''; s=String(s);
+  // Index complete backtick runs once. Repeatedly scanning the remaining
+  // string for each unmatched opening tick can make live preview quadratic.
+  const codeRuns=new Map();
+  for(const match of s.matchAll(/`+/g)){
+    const length=match[0].length;
+    if(!codeRuns.has(length))codeRuns.set(length,[]);
+    codeRuns.get(length).push(match.index);
+  }
   for(let i=0;i<s.length;) {
     const c=s[i];
     if(c==='\\' && i+1<s.length && /[\\`*_{}\[\]()#+.!>|~-]/.test(s[i+1])) {out+=esc(s[i+1]);i+=2;continue;}
     if(c==='`') {
       const mark=/^`+/.exec(s.slice(i))[0];
-      // Closing runs must match the opening run's length exactly.
-      // A longer run is literal content within this code span.
-      let end=-1;
-      for(let j=i+mark.length;j<s.length;){
-        if(s[j]!=='`'){j++;continue;}
-        let k=j+1;
-        while(s[k]==='`')k++;
-        if(k-j===mark.length){end=j;break;}
-        j=k;
+      // Closing runs must match the opening length exactly; find the
+      // first eligible run by binary search instead of rescanning text.
+      const runs=codeRuns.get(mark.length)||[];
+      const threshold=i+mark.length;
+      let lo=0,hi=runs.length;
+      while(lo<hi){
+        const mid=(lo+hi)>>1;
+        if(runs[mid]<threshold)lo=mid+1;
+        else hi=mid;
       }
+      const end=lo<runs.length?runs[lo]:-1;
       if(end!==-1){
           let codeText=s.slice(i+mark.length,end).replace(/\n/g,' ');
           // CommonMark-style padding: one pair of edge spaces separates
