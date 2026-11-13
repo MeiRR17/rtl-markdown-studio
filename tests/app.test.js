@@ -75,6 +75,7 @@ function mount(source = '') {
     listeners.get('theme:change')();
   };
   return { editor, theme, count, status, preview, document, input, quote, changeTheme, buttons,
+    renderer: window.RTLMarkdown,
     click(name, start, end = start) {
       editor.setSelectionRange(start, end);
       listeners.get('toolbar:click')({ target: buttons[name] });
@@ -217,4 +218,18 @@ test('other toolbar snippets and theme selection keep working', () => {
   assert.equal(app.theme.value, 'dark');
   assert.equal(app.document.body.dataset.theme, 'dark');
   assert.equal(app.preview.innerHTML, '<rendered>## Hello</rendered>');
+});
+
+test('render failures show an error and recover on the next edit', () => {
+  const app = mount('first');
+  const original = app.renderer.renderMarkdown;
+  app.renderer.renderMarkdown = () => { throw new Error('simulated renderer failure'); };
+  assert.doesNotThrow(() => app.input('failed <script>'));
+  assert.equal(app.preview.textContent, 'Preview unavailable. Check the Markdown input.');
+  assert.equal(app.status.textContent, 'Preview unavailable');
+  assert.equal(app.count.textContent, '15 characters');
+  app.renderer.renderMarkdown = original;
+  app.input('recovered');
+  assert.equal(app.preview.innerHTML, '<rendered>recovered</rendered>');
+  assert.equal(app.status.textContent, 'Preview up to date');
 });
