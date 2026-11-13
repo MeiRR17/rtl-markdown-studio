@@ -36,7 +36,20 @@
       messages.push('FAIL: ' + sample.markdown + ' — ' + error.message);
     }
   }
+  // Keep the actual rendered quotations visible in CI screenshots.
+  // The fixture has already passed through the safe Markdown renderer.
   fixture.textContent = '';
+  for (const sample of samples) {
+    const group = document.createElement('section');
+    const label = document.createElement('p');
+    label.textContent = sample.direction.toUpperCase() + ' · ' + sample.markdown;
+    label.setAttribute('dir', 'ltr');
+    group.appendChild(label);
+    const rendered = document.createElement('div');
+    rendered.innerHTML = window.RTLMarkdown.renderMarkdown(sample.markdown);
+    group.appendChild(rendered);
+    fixture.appendChild(group);
+  }
   const failures = messages.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = messages.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
