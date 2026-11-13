@@ -250,3 +250,22 @@ test('an unmatched long opener can still use a shorter matching suffix', () => {
  assert.equal(md('```x|y``'), '<p>`<code>x|y</code></p>');
  assert.equal(md('``x|y`'), '<p>`<code>x|y</code></p>');
 });
+
+test('unclosed link brackets remain literal without repeated parsing', () => {
+ const brackets='['.repeat(6000);
+ const html=renderMarkdown('Start '+brackets+' שלום');
+ assert.ok(html.includes(brackets));
+ assert.doesNotMatch(html, /<a /);
+ assert.match(html, / שלום<\/p>$/);
+});
+
+test('indexed link delimiters preserve nesting and escaped closing brackets', () => {
+ const samples = [
+  ['[שלום](https://example.com/a(b)c)', '<a href="https://example.com/a(b)c">שלום</a>'],
+  ['[Nested [שלום]](https://example.com)', '<a href="https://example.com">Nested [שלום]</a>'],
+  ['[bracket \\] text](https://example.com)', '<a href="https://example.com">bracket ] text</a>']
+ ];
+ for(const [markdown,fragment] of samples) {
+  assert.ok(renderMarkdown(markdown).includes(fragment),markdown);
+ }
+});
