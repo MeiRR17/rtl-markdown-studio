@@ -130,6 +130,12 @@ function cells(line){
       remaining.set(run,(remaining.get(run)||0)-1);
       if(!codeFence){
         if(remaining.get(run)>0)codeFence=run;
+        else if(run>1){
+          // Like inline(), an unmatched opener advances one tick and
+          // retries the suffix. A shorter suffix may have a closing run.
+          remaining.set(run-1,(remaining.get(run-1)||0)+1);
+          v+='`';i++;continue;
+        }
       }else if(codeFence===run)codeFence=0;
       v+=source.slice(i,j);i=j;continue;
     }
