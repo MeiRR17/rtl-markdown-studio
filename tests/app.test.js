@@ -172,6 +172,27 @@ test('Heading and List create placeholders at a caret on an empty line', () => {
   }
 });
 
+test('Whitespace-only lines are empty for Heading/List, not for Quote', () => {
+  const source = 'Alpha\n   \nBeta';
+  for (const [action, expected] of [
+    ['heading', '## Alpha\n   \n## Beta'],
+    ['list', '- Alpha\n   \n- Beta'],
+    ['quote', '> Alpha\n>    \n> Beta']
+  ]) {
+    const app = mount(source);
+    app.click(action, 0, source.length);
+    assert.equal(app.editor.value, expected, action);
+  }
+  for (const [action, expected] of [
+    ['heading', 'Existing\n## Heading\nLast'],
+    ['list', 'Existing\n- List item\nLast']
+  ]) {
+    const app = mount('Existing\n   \nLast');
+    app.click(action, 10);
+    assert.equal(app.editor.value, expected);
+  }
+});
+
 test('Inline Code toolbar remains selection-local', () => {
   const app = mount('Hello');
   app.click('code', 0, 5);
