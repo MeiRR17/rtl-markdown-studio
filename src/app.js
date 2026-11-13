@@ -85,8 +85,10 @@
           runs.reduce((max, run) => Math.max(max, run.length + 1), 0)));
         const before = start && editor.value[start - 1] !== '\n' ? '\n' : '';
         const after = end < editor.value.length && editor.value[end] !== '\n' ? '\n' : '';
-        const contentBreak = selected.endsWith('\n') ? '' : '\n';
-        const replacement = before + fence + '\n' + selected + contentBreak + fence + after;
+        // The renderer joins fenced code lines without a final newline.
+        // Always insert a separator before the closing fence so an original
+        // trailing newline is preserved as content instead of being consumed.
+        const replacement = before + fence + '\n' + selected + '\n' + fence + after;
         editor.setRangeText(replacement, start, end, 'select');
         editor.focus();
         const selectedStart = start + before.length + fence.length + 1;
