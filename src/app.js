@@ -77,6 +77,21 @@
       editor.setSelectionRange(lineStart, lineStart + replacement.length);
     } else {
       const selected = editor.value.slice(start, end) || snippet.fallback;
+      if (button.dataset.insert === 'code' && selected.includes('\n')) {
+        // Multiline text needs a fenced Code block; inline backticks would
+        // become unmatched when the Markdown parser splits paragraphs.
+        const runs = selected.match(/`+/g) || [];
+        const fence = '`'.repeat(Math.max(3,
+          runs.reduce((max, run) => Math.max(max, run.length + 1), 0)));
+        const before = start && editor.value[start - 1] !== '\n' ? '\n' : '';
+        const after = end < editor.value.length && editor.value[end] !== '\n' ? '\n' : '';
+        const contentBreak = selected.endsWith('\n') ? '' : '\n';
+        const replacement = before + fence + '\n' + selected + contentBreak + fence + after;
+        editor.setRangeText(replacement, start, end, 'select');
+        editor.focus();
+        const selectedStart = start + before.length + fence.length + 1;
+        editor.setSelectionRange(selectedStart, selectedStart + selected.length);
+      } else {
       // Inline Code must use a fence longer than backtick runs in the selection.
       // Otherwise an existing backtick prematurely closes the generated span.
       const runs = button.dataset.insert === 'code' ? (selected.match(/`+/g) || []) : [];
@@ -95,6 +110,7 @@
       editor.focus();
       editor.setSelectionRange(start + fence.length + (pad ? 1 : 0),
         start + fence.length + (pad ? 1 : 0) + selected.length);
+      }
     }
     editor.dispatchEvent(new Event('input', { bubbles: true }));
 
