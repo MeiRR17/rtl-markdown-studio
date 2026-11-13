@@ -61,7 +61,7 @@
       // A collapsed caret on a blank line should create a usable heading/list
       // placeholder; blank separators in a multi-line selection stay blank.
       const blankCaret = start === end && !selectedLines.trim();
-      const replacement = blankCaret && button.dataset.insert !== 'quote'
+      const replacement = blankCaret
         ? snippet.prefix + snippet.fallback
         : selectedLines.split('\n').map(line =>
           line.trim() || button.dataset.insert === 'quote'
