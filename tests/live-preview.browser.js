@@ -228,6 +228,12 @@
     preview.querySelectorAll('code').length === 0 &&
     preview.querySelector('p')?.textContent === 'Prefix ' + veryLongTicks + ' שלום' &&
     status.textContent === 'Preview up to date');
+  const unmatchedBrackets = '['.repeat(6000);
+  input('Start ' + unmatchedBrackets + ' שלום');
+  check('long unmatched link brackets stay literal in live preview',
+    preview.querySelectorAll('a').length === 0 &&
+    preview.querySelector('p')?.textContent === 'Start ' + unmatchedBrackets + ' שלום' &&
+    status.textContent === 'Preview up to date');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
