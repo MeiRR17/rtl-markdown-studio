@@ -14,7 +14,12 @@
   <h1>v4 live-preview regression</h1>
   <label for="theme">Theme</label>
   <select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
-  <div class="toolbar"><button type="button" data-insert="quote">Quote</button></div>
+  <div class="toolbar">
+    <button type="button" data-insert="heading">Heading</button>
+    <button type="button" data-insert="list">List</button>
+    <button type="button" data-insert="quote">Quote</button>
+    <button type="button" data-insert="code">Code</button>
+  </div>
   <label for="editor">Markdown source</label>
   <textarea id="editor"></textarea>
   <output id="editor-count"></output>
