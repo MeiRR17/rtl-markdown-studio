@@ -60,11 +60,11 @@
       const selectedLines = editor.value.slice(lineStart, lineEnd);
       // A collapsed caret on a blank line should create a usable heading/list
       // placeholder; blank separators in a multi-line selection stay blank.
-      const blankCaret = start === end && !selectedLines.length;
+      const blankCaret = start === end && !selectedLines.trim();
       const replacement = blankCaret && button.dataset.insert !== 'quote'
         ? snippet.prefix + snippet.fallback
         : selectedLines.split('\n').map(line =>
-          line.length || button.dataset.insert === 'quote'
+          line.trim() || button.dataset.insert === 'quote'
             ? snippet.prefix + line : line).join('\n');
       editor.setRangeText(replacement, lineStart, lineEnd, 'select');
       editor.focus();
