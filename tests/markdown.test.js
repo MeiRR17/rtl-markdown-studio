@@ -52,7 +52,7 @@ test('independent direction for headings paragraphs quotes and list items', () =
  const html=renderMarkdown('# שלום Hello\n## Hello שלום\n\n(42) עברית\n\n> שלום quote\n\n- English ראשון\n- עברית second');
  assert.match(html, /<h1 dir="auto">שלום Hello<\/h1>/);
  assert.match(html, /<h2 dir="auto">Hello שלום<\/h2>/);
- assert.match(html, /<blockquote dir="auto"><p dir="auto">שלום quote<\/p><\/blockquote>/);
+ assert.match(html, /<blockquote dir="rtl"><p dir="auto">שלום quote<\/p><\/blockquote>/);
  assert.match(html, /<ul><li dir="auto">English ראשון<\/li><li dir="auto">עברית second<\/li><\/ul>/);
 });
 test('independent table cells and neutral text', () => {
@@ -65,4 +65,19 @@ test('safe links markup and code fences with direction', () => {
  assert.match(html, /<p dir="auto"><a href="https:\/\/example.com\?q=1">שלום<\/a> and English<\/p>/);
  assert.match(html, /<pre><code>&lt;script&gt;alert\(1\)&lt;\/script&gt;<\/code><\/pre>/);
  assert.doesNotMatch(html, /<script>/);
+});
+
+test('blockquote wrapper sets concrete direction for first-strong text', () => {
+ const samples = [
+  ['> שלום quote', 'rtl', 'auto'],
+  ['> English שלום', 'ltr', 'auto'],
+  ['> (123) שלום', 'rtl', 'auto'],
+  ['> 123 ...', 'ltr', 'ltr'],
+  ['> **שלום** English', 'rtl', 'auto'],
+  ['> [שלום](https://example.com) English', 'rtl', 'auto']
+ ];
+ for (const [source, wrapperDirection, paragraphDirection] of samples) {
+  const html = renderMarkdown(source);
+  assert.match(html, new RegExp('^<blockquote dir="'+wrapperDirection+'"><p dir="'+paragraphDirection+'">'));
+ }
 });
