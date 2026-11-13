@@ -172,6 +172,12 @@
   check('inline Code requires exact closing backtick-run length',
     preview.querySelectorAll('p code').length === 1 &&
     preview.querySelector('p code')?.textContent === 'a``b');
+  input('| Name | Note |\n| --- | --- |\n| English | שלום\\|');
+  const trailingPipeCells = preview.querySelectorAll('tbody td');
+  check('escaped trailing table pipe stays visible in Hebrew cell',
+    trailingPipeCells.length === 2 &&
+    trailingPipeCells[1].textContent === 'שלום|' &&
+    getComputedStyle(trailingPipeCells[1]).direction === 'rtl');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
