@@ -201,3 +201,17 @@ test('escaped first backtick leaves remaining run active inside tables', () => {
   assert.equal((html.match(/<td /g)||[]).length,2,source);
  }
 });
+
+test('table parser retries unmatched backtick openers at shorter lengths', () => {
+ const examples = [
+  ['``x|y`', '`<code>x|y</code>'],
+  ['```x|y``', '`<code>x|y</code>'],
+  ['\\``a|b`', '`<code>a|b</code>']
+ ];
+ for (const [source,expected] of examples) {
+  const html=renderMarkdown('| A | B |\n| --- | --- |\n| '+source+' | שלום |');
+  assert.ok(html.includes('<td dir="auto">'+expected+'</td>'),source);
+  assert.equal((html.match(/<td /g)||[]).length,2,source);
+  assert.match(html, /<td dir="auto">שלום<\/td>/);
+ }
+});
