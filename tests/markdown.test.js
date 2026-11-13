@@ -139,3 +139,16 @@ test('unmatched backticks leave table pipe delimiters active', () => {
   assert.ok(!html.includes('b | שלום'),first);
  }
 });
+
+test('inline Code closes only at matching backtick-run lengths', () => {
+ for (const [input,expected] of [
+  ['`a``b`','<code>a``b</code>'],
+  ['``a```b``','<code>a```b</code>'],
+  ['``a`b``','<code>a`b</code>']
+ ]) {
+  assert.equal(md(input),'<p>'+expected+'</p>',input);
+  const table=renderMarkdown('| A | B |\n| --- | --- |\n| '+input+' | שלום |');
+  assert.ok(table.includes('<td dir="auto">'+expected+'</td>'),input);
+  assert.equal((table.match(/<td /g)||[]).length,2,input);
+ }
+});
