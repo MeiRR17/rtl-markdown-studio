@@ -26,6 +26,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify classic browser runtime matches source modules
+        run: node scripts/build-preview-runtime.js --check
       - name: Node regression suite
         run: node --test tests/*.test.js
       - name: Browser-computed blockquote direction
