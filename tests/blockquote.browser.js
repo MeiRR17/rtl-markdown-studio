@@ -7,7 +7,8 @@
     { markdown: '> שלום quote', direction: 'rtl', borderSide: 'right' },
     { markdown: '> English שלום', direction: 'ltr', borderSide: 'left' },
     { markdown: '> (42) שלום', direction: 'rtl', borderSide: 'right' },
-    { markdown: '> 123 ...', direction: 'ltr', borderSide: 'left' }
+    { markdown: '> 123 ...', direction: 'ltr', borderSide: 'left' },
+    { markdown: '> [123](https://example.com) שלום', direction: 'rtl', borderSide: 'right' }
   ];
   const messages = [];
   for (const sample of samples) {
