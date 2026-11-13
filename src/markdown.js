@@ -46,6 +46,13 @@ function inline(s, depth=0) {
 // Browser dir=auto uses visible first-strong text, independently for each block.
 // A deterministic LTR fallback prevents numeric-only text inheriting RTL context.
 const directionAttribute = text => ' dir="' + (firstStrongDirection(text) ? 'auto' : 'ltr') + '"';
+// Determine the container direction from visible inline text, not hidden link URLs.
+const quoteTextDirection = source => {
+  const visible = inline(source).replace(/<[^>]*>/g, '').replace(/&(?:amp|lt|gt|quot|#39);/g, entity =>
+    ({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"})[entity]);
+  return firstStrongDirection(visible) ?? 'ltr';
+};
+
 const fence=s=>/^ {0,3}(`{3,}|~{3,})(.*)$/.exec(s);
 const heading=s=>/^ {0,3}(#{1,6})(?:[ \t]+(.*)|[ \t]*)$/.exec(s);
 const quote=s=>/^ {0,3}>[ \t]?(.*)$/.exec(s);
@@ -86,7 +93,7 @@ function blocks(lines,level=0){
     if(h){const tag='h'+h[1].length;{const content=(h[2]??'').replace(/[ \t]+#+[ \t]*$/,'').trim();out.push('<'+tag+directionAttribute(content)+'>'+inline(content)+'</'+tag+'>');}i++;continue;}
     if(quote(line)){
       const q=[];while(i<lines.length&&quote(lines[i]))q.push(quote(lines[i++])[1]);
-      out.push('<blockquote dir="'+(firstStrongDirection(q.join(' ')) ?? 'ltr')+'">'+blocks(q,level+1)+'</blockquote>');continue;
+      out.push('<blockquote dir="'+quoteTextDirection(q.join(' '))+'">'+blocks(q,level+1)+'</blockquote>');continue;
     }
     const headers=table(lines,i);
     if(headers){
