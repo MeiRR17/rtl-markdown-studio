@@ -81,3 +81,15 @@ test('blockquote wrapper sets concrete direction for first-strong text', () => {
   assert.match(html, new RegExp('^<blockquote dir="'+wrapperDirection+'"><p dir="'+paragraphDirection+'">'));
  }
 });
+
+test('blockquote direction ignores hidden Markdown link URLs and escaped entities', () => {
+ const cases = [
+  ['> [123](https://example.com) שלום', 'rtl'],
+  ['> [123](https://example.com) English', 'ltr'],
+  ['> & שלום', 'rtl'],
+  ['> \`123\` שלום', 'rtl'],
+  ['> [שלום](https://example.com) English', 'rtl']
+ ];
+ for(const [markdown, direction] of cases)
+  assert.match(renderMarkdown(markdown), new RegExp('^<blockquote dir="'+direction+'">'), markdown);
+});
