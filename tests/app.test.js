@@ -196,7 +196,7 @@ test('Whitespace-only lines are empty for Heading/List, not for Quote', () => {
 test('Quote creates a useful placeholder at a blank-line caret', () => {
   for (const source of ['Existing\n\nLast', 'Existing\n   \nLast']) {
     const app = mount(source);
-    app.click('quote', source.indexOf('\n') + 2);
+    app.click('quote', source.indexOf('\n') + (source.includes('   ') ? 2 : 1));
     assert.equal(app.editor.value, 'Existing\n> Quoted text\nLast');
     assert.equal(app.editor.selectionStart, 9);
     assert.equal(app.editor.selectionEnd, 9 + '> Quoted text'.length);
