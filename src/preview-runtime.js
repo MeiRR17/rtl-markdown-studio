@@ -137,6 +137,19 @@ function cells(line){
     for(let k=source.length-2;k>=0&&source[k]==='\\';k--)backslashes++;
     if(backslashes%2===0)source=source.slice(0,-1);
   }
+  // Count unescaped backtick runs once. A matching run later in the row
+  // determines whether pipes belong to inline Code, without rescanning
+  // the remainder of the row for every unmatched opener.
+  const remaining=new Map();
+  for(let k=0;k<source.length;){
+    if(source[k]==='\\'){k+=2;continue;}
+    if(source[k]!=='`'){k++;continue;}
+    let end=k+1;
+    while(source[end]==='`')end++;
+    const length=end-k;
+    remaining.set(length,(remaining.get(length)||0)+1);
+    k=end;
+  }
   for(let i=0;i<source.length;){
     const c=source[i];
     if(slash){v+='\\'+c;slash=false;i++;continue;}
@@ -145,18 +158,9 @@ function cells(line){
       let j=i+1;
       while(source[j]==='`')j++;
       const run=j-i;
+      remaining.set(run,(remaining.get(run)||0)-1);
       if(!codeFence){
-        // An unmatched opening run is literal text, not a code span.
-        // Only shield pipes when a closing run of the same length exists.
-        let closing=false;
-        for(let k=j;k<source.length;){
-          if(source[k]!=='`'){k++;continue;}
-          let end=k+1;
-          while(source[end]==='`')end++;
-          if(end-k===run){closing=true;break;}
-          k=end;
-        }
-        if(closing)codeFence=run;
+        if(remaining.get(run)>0)codeFence=run;
       }else if(codeFence===run)codeFence=0;
       v+=source.slice(i,j);i=j;continue;
     }
