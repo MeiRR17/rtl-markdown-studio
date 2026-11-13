@@ -122,6 +122,12 @@
   check('Heading creates a placeholder at a blank-line caret',
     editor.value === 'Existing\n## Heading\nLast' &&
     preview.querySelector('h2')?.textContent === 'Heading');
+  input('Alpha\n   \nBeta');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="list"]').click();
+  check('List leaves whitespace-only separators unchanged',
+    editor.value === '- Alpha\n   \n- Beta' &&
+    preview.querySelectorAll('li').length === 2);
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
