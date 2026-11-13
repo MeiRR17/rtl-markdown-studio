@@ -13,7 +13,8 @@ test('browser classic renderer agrees with canonical module for quote direction'
  for (const markdown of [
   '> שלום quote', '> English שלום', '> (42) שלום',
   '> 123 ...', '> **שלום** English', '> [שלום](https://example.com) English',
-  '> עברית first\n> English second'
+  '> עברית first\n> English second',
+  '> [123](https://example.com) שלום', '> & שלום'
  ]) {
   assert.equal(browser.window.RTLMarkdown.renderMarkdown(markdown), renderMarkdown(markdown));
  }
