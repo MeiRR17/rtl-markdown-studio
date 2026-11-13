@@ -209,6 +209,13 @@
     editor.value === '```\nfirst\nשני\n```' &&
     preview.querySelector('pre[dir="ltr"] code')?.textContent === 'first\nשני' &&
     editor.value.slice(editor.selectionStart, editor.selectionEnd) === 'first\nשני');
+  input('first\nשני\n');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="code"]').click();
+  check('multiline Code preserves selected trailing newline in preview',
+    editor.value === '```\nfirst\nשני\n\n```' &&
+    preview.querySelector('pre[dir="ltr"] code')?.textContent === 'first\nשני\n' &&
+    editor.value.slice(editor.selectionStart, editor.selectionEnd) === 'first\nשני\n');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
