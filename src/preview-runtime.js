@@ -142,7 +142,9 @@ function cells(line){
   // the remainder of the row for every unmatched opener.
   const remaining=new Map();
   for(let k=0;k<source.length;){
-    if(source[k]==='\\'){k+=2;continue;}
+    // All runs can close a code span; backslashes are literal inside it.
+    // Escapes outside spans are handled in the second pass.
+
     if(source[k]!=='`'){k++;continue;}
     let end=k+1;
     while(source[end]==='`')end++;
@@ -152,8 +154,15 @@ function cells(line){
   }
   for(let i=0;i<source.length;){
     const c=source[i];
-    if(slash){v+='\\'+c;slash=false;i++;continue;}
-    if(c==='\\'){slash=true;i++;continue;}
+    if(slash){
+      if(c==='`'){
+        let j=i+1;
+        while(source[j]==='`')j++;
+        remaining.set(j-i,(remaining.get(j-i)||0)-1);
+      }
+      v+='\\'+c;slash=false;i++;continue;
+    }
+    if(c==='\\' && !codeFence){slash=true;i++;continue;}
     if(c==='`'){
       let j=i+1;
       while(source[j]==='`')j++;
