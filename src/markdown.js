@@ -18,7 +18,17 @@ function inline(s, depth=0) {
     const c=s[i];
     if(c==='\\' && i+1<s.length && /[\\`*_{}\[\]()#+.!>|~-]/.test(s[i+1])) {out+=esc(s[i+1]);i+=2;continue;}
     if(c==='`') {
-      const mark=/^`+/.exec(s.slice(i))[0], end=s.indexOf(mark,i+mark.length);
+      const mark=/^`+/.exec(s.slice(i))[0];
+      // Closing runs must match the opening run's length exactly.
+      // A longer run is literal content within this code span.
+      let end=-1;
+      for(let j=i+mark.length;j<s.length;){
+        if(s[j]!=='`'){j++;continue;}
+        let k=j+1;
+        while(s[k]==='`')k++;
+        if(k-j===mark.length){end=j;break;}
+        j=k;
+      }
       if(end!==-1){
           let codeText=s.slice(i+mark.length,end).replace(/\n/g,' ');
           // CommonMark-style padding: one pair of edge spaces separates
