@@ -57,11 +57,15 @@
       const lastTouched = Math.max(start, end - 1);
       const lineBreak = editor.value.indexOf('\n', lastTouched);
       const lineEnd = lineBreak === -1 ? editor.value.length : lineBreak;
-      const replacement = editor.value.slice(lineStart, lineEnd)
-        // Preserve blank separators for headings/lists; only quotes should
-        // explicitly prefix empty lines to keep a contiguous blockquote.
-        .split('\n').map(line => line.length || button.dataset.insert === 'quote'
-          ? snippet.prefix + line : line).join('\n');
+      const selectedLines = editor.value.slice(lineStart, lineEnd);
+      // A collapsed caret on a blank line should create a usable heading/list
+      // placeholder; blank separators in a multi-line selection stay blank.
+      const blankCaret = start === end && !selectedLines.length;
+      const replacement = blankCaret && button.dataset.insert !== 'quote'
+        ? snippet.prefix + snippet.fallback
+        : selectedLines.split('\n').map(line =>
+          line.length || button.dataset.insert === 'quote'
+            ? snippet.prefix + line : line).join('\n');
       editor.setRangeText(replacement, lineStart, lineEnd, 'select');
       editor.focus();
       editor.setSelectionRange(lineStart, lineStart + replacement.length);
