@@ -78,3 +78,10 @@ test('browser companion preserves escaped trailing pipes in Hebrew table cells',
   assert.equal(browser.window.RTLMarkdown.renderMarkdown(md),renderMarkdown(md),cell);
  }
 });
+
+test('browser companion matches table scan with many unpaired runs', () => {
+ const irregular = Array.from({length: 48}, (_, i) => '`'.repeat(i+1)+'x').join(' ');
+ const markdown = '| A | B |\n| --- | --- |\n| '+irregular+' | שלום |';
+ assert.equal(browser.window.RTLMarkdown.renderMarkdown(markdown), renderMarkdown(markdown));
+ assert.equal((renderMarkdown(markdown).match(/<td /g) || []).length, 2);
+});
