@@ -71,6 +71,22 @@ function inline(s, depth=0) {
   const closingBrackets=new Map(),openBrackets=[];
   for(let p=0;p<s.length;p++){
     if(s[p]==='\\'){p++;continue;}
+    if(s[p]==='`'){
+      // Code spans are literal link-label content: brackets inside them
+      // must never close or nest a surrounding Markdown link label.
+      let end=p+1;
+      while(s[end]==='`')end++;
+      const length=end-p;
+      const runs=codeRuns.get(length)||[];
+      let lo=0,hi=runs.length;
+      while(lo<hi){
+        const mid=(lo+hi)>>1;
+        if(runs[mid]<end)lo=mid+1;
+        else hi=mid;
+      }
+      if(lo<runs.length){p=runs[lo]+length-1;continue;}
+      p=end-1;continue;
+    }
     if(s[p]==='[')openBrackets.push(p);
     else if(s[p]===']'&&openBrackets.length)
       closingBrackets.set(openBrackets.pop(),p);
