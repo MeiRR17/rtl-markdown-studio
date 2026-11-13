@@ -112,3 +112,11 @@ test('browser companion matches fallback to shorter unmatched Code opener', () =
   assert.equal((html.match(/<td /g)||[]).length,2,cell);
  }
 });
+
+test('browser companion isolates nested fenced Code LTR in RTL quote', () => {
+ const source='> שלום\n> ```js\n> const value = (1 + 2);\n> ```';
+ const html=browser.window.RTLMarkdown.renderMarkdown(source);
+ assert.equal(html,renderMarkdown(source));
+ assert.match(html, /<blockquote dir="rtl">/);
+ assert.match(html, /<pre dir="ltr"><code>const value = \(1 \+ 2\);<\/code><\/pre>/);
+});
