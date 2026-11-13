@@ -146,6 +146,19 @@ test('List formatting respects full touched lines and an exclusive end boundary'
   assert.equal(other.editor.value, '- First\nSecond');
 });
 
+test('Heading and List preserve empty separators while Quote keeps them', () => {
+  const source = 'Alpha\n\nBeta';
+  for (const [action, expected] of [
+    ['heading', '## Alpha\n\n## Beta'],
+    ['list', '- Alpha\n\n- Beta'],
+    ['quote', '> Alpha\n> \n> Beta']
+  ]) {
+    const app = mount(source);
+    app.click(action, 0, source.length);
+    assert.equal(app.editor.value, expected, action);
+  }
+});
+
 test('Inline Code toolbar remains selection-local', () => {
   const app = mount('Hello');
   app.click('code', 0, 5);
