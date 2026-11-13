@@ -66,6 +66,14 @@
   check('English editor chrome stays LTR',
     getComputedStyle(document.body).direction === 'ltr' &&
     getComputedStyle(document.querySelector('.toolbar')).direction === 'ltr');
+  input('שלום first\nEnglish second');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="quote"]').click();
+  check('toolbar quotes every selected line',
+    editor.value === '> שלום first\n> English second' &&
+    preview.querySelectorAll('blockquote p').length === 1 &&
+    preview.querySelector('blockquote')?.textContent.includes('English second') &&
+    getComputedStyle(preview.querySelector('blockquote')).direction === 'rtl');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
