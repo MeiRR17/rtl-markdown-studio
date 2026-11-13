@@ -127,3 +127,9 @@ test('browser companion matches long unmatched inline Code run without stalling'
  assert.equal(html,renderMarkdown(source));
  assert.doesNotMatch(html, /<code>/);
 });
+
+test('browser companion handles 12000 unclosed ticks and shorter suffixes', () => {
+ for (const source of ['Prefix '+'`'.repeat(12000)+' שלום', '```x|y``', '``x|y`']) {
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(source),renderMarkdown(source));
+ }
+});
