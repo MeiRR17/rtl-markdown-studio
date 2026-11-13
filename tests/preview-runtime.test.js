@@ -120,3 +120,10 @@ test('browser companion isolates nested fenced Code LTR in RTL quote', () => {
  assert.match(html, /<blockquote dir="rtl">/);
  assert.match(html, /<pre dir="ltr"><code>const value = \(1 \+ 2\);<\/code><\/pre>/);
 });
+
+test('browser companion matches long unmatched inline Code run without stalling', () => {
+ const source='Prefix '+ '`'.repeat(4096) +' שלום';
+ const html=browser.window.RTLMarkdown.renderMarkdown(source);
+ assert.equal(html,renderMarkdown(source));
+ assert.doesNotMatch(html, /<code>/);
+});
