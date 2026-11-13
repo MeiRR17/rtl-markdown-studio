@@ -234,6 +234,12 @@
     preview.querySelectorAll('a').length === 0 &&
     preview.querySelector('p')?.textContent === 'Start ' + unmatchedBrackets + ' שלום' &&
     status.textContent === 'Preview up to date');
+  input('[שלום `]` end](https://example.com)');
+  const bracketCodeLink = preview.querySelector('p a');
+  check('code bracket in link label remains linked with Hebrew text',
+    bracketCodeLink?.getAttribute('href') === 'https://example.com' &&
+    bracketCodeLink.querySelector('code')?.textContent === ']' &&
+    bracketCodeLink.textContent === 'שלום ] end');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
