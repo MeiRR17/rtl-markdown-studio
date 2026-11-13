@@ -48,17 +48,23 @@
     const snippet = snippets[button.dataset.insert];
     if (!snippet) return;
     const start = editor.selectionStart, end = editor.selectionEnd;
-    const selected = editor.value.slice(start, end) || snippet.fallback;
-    // A blockquote must prefix every selected line, not just the first one.
-    const isMultilineQuote = button.dataset.insert === 'quote' && selected.includes('\n');
-    const replacement = isMultilineQuote
-      ? selected.split('\n').map(line => '> ' + line).join('\n')
-      : `${snippet.prefix}${selected}${snippet.suffix}`;
-    editor.setRangeText(replacement, start, end, 'select');
-    editor.focus();
-    if (isMultilineQuote) {
-      editor.setSelectionRange(start, start + replacement.length);
+    if (button.dataset.insert === 'quote' && editor.value.length) {
+      // Block quotes are line-based: include complete touched lines, even when
+      // the cursor/selection starts midway through a line. A selection ending
+      // at the next line's start must not quote that untouched line.
+      const lineStart = editor.value.lastIndexOf('\n', start - 1) + 1;
+      const lastTouched = Math.max(start, end - 1);
+      const lineBreak = editor.value.indexOf('\n', lastTouched);
+      const lineEnd = lineBreak === -1 ? editor.value.length : lineBreak;
+      const replacement = editor.value.slice(lineStart, lineEnd)
+        .split('\n').map(line => '> ' + line).join('\n');
+      editor.setRangeText(replacement, lineStart, lineEnd, 'select');
+      editor.focus();
+      editor.setSelectionRange(lineStart, lineStart + replacement.length);
     } else {
+      const selected = editor.value.slice(start, end) || snippet.fallback;
+      editor.setRangeText(`${snippet.prefix}${selected}${snippet.suffix}`, start, end, 'select');
+      editor.focus();
       editor.setSelectionRange(start + snippet.prefix.length, start + snippet.prefix.length + selected.length);
     }
     editor.dispatchEvent(new Event('input', { bubbles: true }));
