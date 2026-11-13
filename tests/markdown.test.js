@@ -166,3 +166,12 @@ test('trailing escaped table pipes remain visible in Hebrew cells', () => {
   assert.equal((html.match(/<td /g) || []).length, 2, cell);
  }
 });
+
+test('table scanner preserves boundaries across many unmatched backtick lengths', () => {
+ const irregular = Array.from({length: 48}, (_, i) => '`'.repeat(i+1) + 'x').join(' ');
+ const source = '| A | B |\n| --- | --- |\n| ' + irregular + ' | שלום |';
+ const html = renderMarkdown(source);
+ assert.equal((html.match(/<td /g) || []).length, 2);
+ assert.match(html, /<td dir="auto">שלום<\/td>/);
+ assert.match(html, /<td dir="auto">/);
+});
