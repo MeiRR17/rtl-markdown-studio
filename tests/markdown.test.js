@@ -237,3 +237,16 @@ test('long unmatched inline Code runs render as literal text without hanging', (
  assert.ok(html.endsWith(' שלום</p>'));
  assert.doesNotMatch(html, /<code>/);
 });
+
+test('very long unmatched inline runs preserve their literal contents', () => {
+ const ticks='`'.repeat(12000);
+ const rendered=renderMarkdown('Prefix '+ticks+' שלום');
+ assert.ok(rendered.includes(ticks));
+ assert.doesNotMatch(rendered, /<code>/);
+ assert.ok(rendered.endsWith(' שלום</p>'));
+});
+
+test('an unmatched long opener can still use a shorter matching suffix', () => {
+ assert.equal(md('```x|y``'), '<p>`<code>x|y</code></p>');
+ assert.equal(md('``x|y`'), '<p>`<code>x|y</code></p>');
+});
