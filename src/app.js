@@ -77,9 +77,16 @@
       editor.setSelectionRange(lineStart, lineStart + replacement.length);
     } else {
       const selected = editor.value.slice(start, end) || snippet.fallback;
-      editor.setRangeText(`${snippet.prefix}${selected}${snippet.suffix}`, start, end, 'select');
+      // Inline Code must use a fence longer than backtick runs in the selection.
+      // Otherwise an existing backtick prematurely closes the generated span.
+      const runs = button.dataset.insert === 'code' ? (selected.match(/`+/g) || []) : [];
+      const fence = button.dataset.insert === 'code'
+        ? '`'.repeat(runs.reduce((max, run) => Math.max(max, run.length), 0) + 1)
+        : snippet.prefix;
+      const suffix = button.dataset.insert === 'code' ? fence : snippet.suffix;
+      editor.setRangeText(`${fence}${selected}${suffix}`, start, end, 'select');
       editor.focus();
-      editor.setSelectionRange(start + snippet.prefix.length, start + snippet.prefix.length + selected.length);
+      editor.setSelectionRange(start + fence.length, start + fence.length + selected.length);
     }
     editor.dispatchEvent(new Event('input', { bubbles: true }));
 
