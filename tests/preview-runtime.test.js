@@ -32,3 +32,14 @@ test('browser-rendered English and neutral blockquotes retain LTR wrapper', () =
  assert.match(browser.window.RTLMarkdown.renderMarkdown('> English שלום'), /^<blockquote dir="ltr">/);
  assert.match(browser.window.RTLMarkdown.renderMarkdown('> 123 ...'), /^<blockquote dir="ltr">/);
 });
+
+test('browser companion matches neutral-link direction in RTL quotation', () => {
+ const examples = [
+  '> שלום\n> \n> [123](https://english.example)',
+  '[123](https://שלום.example)',
+  '[שלום](https://example.com)'
+ ];
+ for (const source of examples)
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(source), renderMarkdown(source));
+ assert.match(browser.window.RTLMarkdown.renderMarkdown(examples[0]), /<p dir="ltr"><a /);
+});
