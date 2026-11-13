@@ -7,10 +7,11 @@ import { resolve, dirname } from 'node:path';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = path => readFileSync(resolve(root, path), 'utf8');
-const direction = read('src/direction.js').replace(/export /g, '');
-const markdown = read('src/markdown.js')
-  .replace(/^import[^\n]+\n/gm, '')
-  .replace(/export /g, '');
+const stripExports = source => source.replace(
+  /^export (?=(?:async function|function|const|let|var|class)\b)/gm, '');
+const direction = stripExports(read('src/direction.js'));
+const markdown = stripExports(read('src/markdown.js')
+  .replace(/^import[^\n]+\n/gm, ''));
 const header = `/* v4 browser companion generated from src/direction.js and src/markdown.js.
  * Preserve direct file:// operation; keep source modules canonical for Node tests.
  */
