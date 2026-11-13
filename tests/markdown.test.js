@@ -130,3 +130,12 @@ test('table pipes inside variable-length code spans do not split cells', () => {
   assert.equal((html.match(/<td /g)||[]).length,2,cell);
  }
 });
+
+test('unmatched backticks leave table pipe delimiters active', () => {
+ for (const first of ['`a|b', '``a|b`']) {
+  const html=renderMarkdown('| A | B | C |\n| --- | --- | --- |\n| '+first+' | שלום |');
+  assert.equal((html.match(/<td /g)||[]).length,3,first);
+  assert.match(html, /<td dir="auto">שלום<\/td>/);
+  assert.ok(!html.includes('b | שלום'),first);
+ }
+});
