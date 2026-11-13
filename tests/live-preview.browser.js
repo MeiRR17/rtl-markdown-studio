@@ -161,6 +161,13 @@
     codePipeCells[0].querySelector('code')?.textContent === 'a|b' &&
     codePipeCells[1].textContent === 'שלום' &&
     getComputedStyle(codePipeCells[1]).direction === 'rtl');
+  input('| A | B | C |\n| --- | --- | --- |\n| `a|b | שלום |');
+  const unmatchedCodeCells = preview.querySelectorAll('tbody td');
+  check('unmatched code ticks do not swallow table cell separators',
+    unmatchedCodeCells.length === 3 &&
+    unmatchedCodeCells[0].textContent === '`a' &&
+    unmatchedCodeCells[1].textContent === 'b' &&
+    unmatchedCodeCells[2].textContent === 'שלום');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
