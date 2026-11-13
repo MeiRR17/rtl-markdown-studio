@@ -228,3 +228,12 @@ test('fenced code remains LTR inside independently RTL blockquotes', () => {
   assert.match(html, /<\/code><\/pre><\/blockquote>$/);
  }
 });
+
+test('long unmatched inline Code runs render as literal text without hanging', () => {
+ const run='`'.repeat(4096);
+ const html=renderMarkdown('Prefix '+run+' שלום');
+ assert.ok(html.startsWith('<p dir="auto">Prefix '));
+ assert.ok(html.includes(run));
+ assert.ok(html.endsWith(' שלום</p>'));
+ assert.doesNotMatch(html, /<code>/);
+});
