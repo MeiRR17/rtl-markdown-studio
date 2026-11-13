@@ -84,9 +84,14 @@
         ? '`'.repeat(runs.reduce((max, run) => Math.max(max, run.length), 0) + 1)
         : snippet.prefix;
       const suffix = button.dataset.insert === 'code' ? fence : snippet.suffix;
-      editor.setRangeText(`${fence}${selected}${suffix}`, start, end, 'select');
+      // Padding keeps a selected edge backtick from merging with the fence.
+      const pad = button.dataset.insert === 'code' &&
+        (selected.startsWith('`') || selected.endsWith('`'));
+      const inner = pad ? ' ' + selected + ' ' : selected;
+      editor.setRangeText(`${fence}${inner}${suffix}`, start, end, 'select');
       editor.focus();
-      editor.setSelectionRange(start + fence.length, start + fence.length + selected.length);
+      editor.setSelectionRange(start + fence.length + (pad ? 1 : 0),
+        start + fence.length + (pad ? 1 : 0) + selected.length);
     }
     editor.dispatchEvent(new Event('input', { bubbles: true }));
 
