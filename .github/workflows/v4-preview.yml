@@ -73,7 +73,7 @@ jobs:
             --disable-dev-shm-usage --virtual-time-budget=5000 \
             --window-size=1100,900 --screenshot="$PWD/v4-live-preview.png" \
             "file://$PWD/tests/live-preview.browser.html"
-          if ! grep -q 'data-failures="0"' "$output" || ! grep -q 'data-executed="37"' "$output"; then
+          if ! grep -q 'data-failures="0"' "$output" || ! grep -q 'data-executed="38"' "$output"; then
             echo "::error::Live preview integration regression did not pass"
             grep -E 'data-failures=|FAIL:|Running tests' "$output" || true
             exit 1
