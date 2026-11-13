@@ -48,16 +48,17 @@
     const snippet = snippets[button.dataset.insert];
     if (!snippet) return;
     const start = editor.selectionStart, end = editor.selectionEnd;
-    if (button.dataset.insert === 'quote' && editor.value.length) {
-      // Block quotes are line-based: include complete touched lines, even when
-      // the cursor/selection starts midway through a line. A selection ending
-      // at the next line's start must not quote that untouched line.
+    const isBlockAction = ['quote', 'heading', 'list'].includes(button.dataset.insert);
+    if (isBlockAction && editor.value.length) {
+      // Block markers belong at line starts, including for a mid-line caret
+      // and partially selected lines. Do not touch a next line when the
+      // selection ends exactly at its start.
       const lineStart = editor.value.lastIndexOf('\n', start - 1) + 1;
       const lastTouched = Math.max(start, end - 1);
       const lineBreak = editor.value.indexOf('\n', lastTouched);
       const lineEnd = lineBreak === -1 ? editor.value.length : lineBreak;
       const replacement = editor.value.slice(lineStart, lineEnd)
-        .split('\n').map(line => '> ' + line).join('\n');
+        .split('\n').map(line => snippet.prefix + line).join('\n');
       editor.setRangeText(replacement, lineStart, lineEnd, 'select');
       editor.focus();
       editor.setSelectionRange(lineStart, lineStart + replacement.length);
