@@ -103,3 +103,15 @@ test('neutral link labels ignore invisible URL letters inside RTL quotations', (
  const visible=renderMarkdown('[שלום](https://example.com)');
  assert.match(visible, /^<p dir="auto"><a /);
 });
+
+test('Code spans preserve literal edge backticks and embedded runs', () => {
+ const cases = [
+  ['`` `code` ``', '<p><code>`code`</code></p>'],
+  ['`` `start ``', '<p><code>`start</code></p>'],
+  ['`` end` ``', '<p><code>end`</code></p>'],
+  ['```Use ``code`` here```', '<p><code>Use ``code`` here</code></p>'],
+  ['``   ``', '<p><code>   </code></p>']
+ ];
+ for (const [input, expected] of cases)
+  assert.equal(md(input), expected, input);
+});
