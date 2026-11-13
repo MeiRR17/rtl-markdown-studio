@@ -175,3 +175,17 @@ test('table scanner preserves boundaries across many unmatched backtick lengths'
  assert.match(html, /<td dir="auto">שלום<\/td>/);
  assert.match(html, /<td dir="auto">/);
 });
+
+test('backslashes inside Code spans do not escape table syntax', () => {
+ const examples=[
+  ['`a\\|b`', '<code>a\\|b</code>'],
+  ['``a\\|b``', '<code>a\\|b</code>'],
+  ['`a|b`', '<code>a|b</code>']
+ ];
+ for (const [text,expected] of examples) {
+  const html=renderMarkdown('| A | B |\n| --- | --- |\n| '+text+' | שלום |');
+  assert.equal((html.match(/<td /g)||[]).length,2,text);
+  assert.ok(html.includes('<td dir="auto">'+expected+'</td>'),text);
+  assert.match(html, /<td dir="auto">שלום<\/td>/);
+ }
+});
