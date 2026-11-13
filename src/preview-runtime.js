@@ -129,7 +129,14 @@ const item=s=>/^( {0,3})([-+*]|\d{1,9}[.)])[ \t]+(.*)$/.exec(s);
 const rule=s=>/^ {0,3}(?:\*\s*){3,}$|^ {0,3}(?:-\s*){3,}$|^ {0,3}(?:_\s*){3,}$/.test(s);
 function cells(line){
   let out=[],v='',slash=false,codeFence=0;
-  const source=line.trim().replace(/^\|/,'').replace(/\|$/,'');
+  // Strip optional outer table pipes only when they are unescaped.
+  // A final \\| is visible cell text, not the table's right border.
+  let source=line.trim().replace(/^\|/,'');
+  if(source.endsWith('|')){
+    let backslashes=0;
+    for(let k=source.length-2;k>=0&&source[k]==='\\';k--)backslashes++;
+    if(backslashes%2===0)source=source.slice(0,-1);
+  }
   for(let i=0;i<source.length;){
     const c=source[i];
     if(slash){v+='\\'+c;slash=false;i++;continue;}
