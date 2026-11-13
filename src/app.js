@@ -28,8 +28,14 @@
       return;
     }
     // The parser escapes raw HTML and only emits allowlisted safe elements.
-    preview.innerHTML = window.RTLMarkdown.renderMarkdown(value);
-    status.textContent = 'Preview up to date';
+    // If rendering fails, never display stale preview HTML as up to date.
+    try {
+      preview.innerHTML = window.RTLMarkdown.renderMarkdown(value);
+      status.textContent = 'Preview up to date';
+    } catch {
+      preview.textContent = 'Preview unavailable. Check the Markdown input.';
+      status.textContent = 'Preview unavailable';
+    }
   };
   const updateCount = () => {
     const length = Array.from(editor.value).length;
