@@ -13,6 +13,7 @@
     editor.value = markdown;
     editor.dispatchEvent(new Event('input', { bubbles: true }));
   };
+  try {
   check('initial empty guidance', preview.textContent.includes('Start writing'));
   input('# שלום Hello\n\nEnglish עברית\n\n> שלום quote');
   check('typing updates all preview blocks immediately',
@@ -139,4 +140,14 @@
   results.dataset.failures = String(failures);
   results.dataset.executed = String(tests.length);
   document.title = (failures ? 'FAIL' : 'PASS') + ' — v4 live preview';
+  } catch (error) {
+    // A setup/runtime exception must not leave the fixture stuck at "Running
+    // tests…". Preserve passed checks and expose the failure in CI DOM dumps.
+    const message = 'FAIL: uncaught fixture error — ' + String(error?.message ?? error);
+    const messages = [...tests, message];
+    results.textContent = messages.join('\n') + '\n1+ failures';
+    results.dataset.failures = String(messages.filter(line => line.startsWith('FAIL:')).length);
+    results.dataset.executed = String(tests.length);
+    document.title = 'FAIL — v4 live preview';
+  }
 })();
