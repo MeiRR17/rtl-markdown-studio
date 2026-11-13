@@ -269,3 +269,13 @@ test('indexed link delimiters preserve nesting and escaped closing brackets', ()
   assert.ok(renderMarkdown(markdown).includes(fragment),markdown);
  }
 });
+
+test('brackets inside inline Code do not terminate Markdown link labels', () => {
+ const examples=[
+  ['[text `]` after](https://example.com)', '<a href="https://example.com">text <code>]</code> after</a>'],
+  ['[text `[` after](https://example.com)', '<a href="https://example.com">text <code>[</code> after</a>'],
+  ['[שלום `]` end](https://example.com)', '<a href="https://example.com">שלום <code>]</code> end</a>'],
+  ['[text ``]` after](https://example.com)', '<a href="https://example.com">text `<code>]</code> after</a>']
+ ];
+ for(const [source,fragment] of examples) assert.ok(renderMarkdown(source).includes(fragment),source);
+});
