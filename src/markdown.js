@@ -62,7 +62,13 @@ const directionAttribute = text => ' dir="' +
 const quoteTextDirection = source =>
   firstStrongDirection(visibleInlineText(source)) ?? 'ltr';
 
-const fence=s=>/^ {0,3}(`{3,}|~{3,})(.*)$/.exec(s);
+// A backtick fence cannot have backticks in its info string. Without this
+// check, an inline span like ```Use ``code`` here``` is mistaken for a code block.
+const fence=s=>{
+  const match=/^ {0,3}(`{3,}|~{3,})(.*)$/.exec(s);
+  return match && (match[1][0] !== '`' || !match[2].includes('`'))
+    ? match : null;
+};
 const heading=s=>/^ {0,3}(#{1,6})(?:[ \t]+(.*)|[ \t]*)$/.exec(s);
 const quote=s=>/^ {0,3}>[ \t]?(.*)$/.exec(s);
 const item=s=>/^( {0,3})([-+*]|\d{1,9}[.)])[ \t]+(.*)$/.exec(s);
