@@ -103,3 +103,12 @@ test('browser companion keeps escaped first tick and a code span in one table ce
   assert.equal((html.match(/<td /g)||[]).length,2,code);
  }
 });
+
+test('browser companion matches fallback to shorter unmatched Code opener', () => {
+ for (const cell of ['``x|y`','```x|y``','\\``a|b`']) {
+  const markdown='| A | B |\n| --- | --- |\n| '+cell+' | שלום |';
+  const html=browser.window.RTLMarkdown.renderMarkdown(markdown);
+  assert.equal(html,renderMarkdown(markdown),cell);
+  assert.equal((html.match(/<td /g)||[]).length,2,cell);
+ }
+});
