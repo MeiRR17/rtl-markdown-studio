@@ -68,7 +68,12 @@ jobs:
           "$browser" --headless --no-sandbox --disable-gpu \
             --disable-dev-shm-usage --virtual-time-budget=5000 \
             --dump-dom "file://$PWD/tests/live-preview.browser.html" > "$output"
-          if ! grep -q 'data-failures="0"' "$output" || ! grep -q 'data-executed="7"' "$output"; then
+          # Preserve the rendered editor/preview fixture for visual inspection.
+          "$browser" --headless --no-sandbox --disable-gpu \
+            --disable-dev-shm-usage --virtual-time-budget=5000 \
+            --window-size=1100,900 --screenshot="$PWD/v4-live-preview.png" \
+            "file://$PWD/tests/live-preview.browser.html"
+          if ! grep -q 'data-failures="0"' "$output" || ! grep -q 'data-executed="9"' "$output"; then
             echo "::error::Live preview integration regression did not pass"
             grep -E 'data-failures=|FAIL:|Running tests' "$output" || true
             exit 1
@@ -79,5 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: v4-browser-regression
-          path: v4-browser-regression.png
+          path: |
+            v4-browser-regression.png
+            v4-live-preview.png
           if-no-files-found: ignore
