@@ -202,6 +202,13 @@
   check('Code toolbar preserves selected outer spaces in preview',
     editor.value === '`  שלום  `' &&
     preview.querySelector('p code')?.textContent === ' שלום ');
+  input('first\nשני');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="code"]').click();
+  check('multiline Code toolbar uses fenced block and preserves all text',
+    editor.value === '```\nfirst\nשני\n```' &&
+    preview.querySelector('pre[dir="ltr"] code')?.textContent === 'first\nשני' &&
+    editor.value.slice(editor.selectionStart, editor.selectionEnd) === 'first\nשני');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
