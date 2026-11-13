@@ -135,6 +135,12 @@
   check('Quote creates a placeholder at an empty-line caret',
     editor.value === 'Existing\n> Quoted text\nLast' &&
     preview.querySelector('blockquote')?.textContent === 'Quoted text');
+  input('> שלום\n> \n> [123](https://english.example)');
+  const neutralLinkParagraph = preview.querySelectorAll('blockquote p')[1];
+  check('neutral link inside RTL quote keeps LTR direction',
+    getComputedStyle(preview.querySelector('blockquote')).direction === 'rtl' &&
+    neutralLinkParagraph?.getAttribute('dir') === 'ltr' &&
+    getComputedStyle(neutralLinkParagraph).direction === 'ltr');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
