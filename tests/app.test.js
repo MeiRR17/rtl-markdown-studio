@@ -70,7 +70,11 @@ function mount(source = '') {
     editor.setSelectionRange(start, end);
     listeners.get('toolbar:click')({ target: buttons.quote });
   };
-  return { editor, theme, count, status, preview, document, input, quote, buttons,
+  const changeTheme = value => {
+    theme.value = value;
+    listeners.get('theme:change')();
+  };
+  return { editor, theme, count, status, preview, document, input, quote, changeTheme, buttons,
     click(name, start, end = start) {
       editor.setSelectionRange(start, end);
       listeners.get('toolbar:click')({ target: buttons[name] });
@@ -125,8 +129,8 @@ test('other toolbar snippets and theme selection keep working', () => {
   const app = mount('Hello');
   app.click('heading', 0, 5);
   assert.equal(app.editor.value, '## Hello');
-  app.theme.value = 'dark';
-  // Theme change calls the same listener as the native select element.
+  app.changeTheme('dark');
   assert.equal(app.theme.value, 'dark');
-  assert.equal(app.document.body.dataset.theme, 'system');
+  assert.equal(app.document.body.dataset.theme, 'dark');
+  assert.equal(app.preview.innerHTML, '<rendered>## Hello</rendered>');
 });
