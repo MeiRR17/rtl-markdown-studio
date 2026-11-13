@@ -8,6 +8,7 @@ on:
       - 'src/direction.js'
       - 'src/preview-runtime.js'
       - 'src/app.js'
+      - 'index.html'
       - 'styles.css'
       - 'tests/**'
       - '.github/workflows/v4-preview.yml'
