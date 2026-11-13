@@ -32,15 +32,19 @@ function inline(s, depth=0) {
       // must never close or nest a surrounding Markdown link label.
       let end=p+1;
       while(s[end]==='`')end++;
-      const length=end-p;
-      const runs=codeRuns.get(length)||[];
-      let lo=0,hi=runs.length;
-      while(lo<hi){
-        const mid=(lo+hi)>>1;
-        if(runs[mid]<end)lo=mid+1;
-        else hi=mid;
+      const fullLength=end-p;
+      let close=-1,matchedLength=0;
+      for(let length=fullLength;length>0;length--){
+        const runs=codeRuns.get(length)||[];
+        let lo=0,hi=runs.length;
+        while(lo<hi){
+          const mid=(lo+hi)>>1;
+          if(runs[mid]<end)lo=mid+1;
+          else hi=mid;
+        }
+        if(lo<runs.length){close=runs[lo];matchedLength=length;break;}
       }
-      if(lo<runs.length){p=runs[lo]+length-1;continue;}
+      if(close!==-1){p=close+matchedLength-1;continue;}
       p=end-1;continue;
     }
     if(s[p]==='[')openBrackets.push(p);
