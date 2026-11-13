@@ -214,13 +214,16 @@ test('Code selects a delimiter longer than any existing backtick run', () => {
   const examples = [
     ['Use `code` here', '``Use `code` here``'],
     ['Use ``code`` here', '```Use ``code`` here```'],
-    ['plain text', '`plain text`']
+    ['plain text', '`plain text`'],
+    ['`code`', '`` `code` ``'],
+    ['`start', '`` `start ``'],
+    ['end`', '`` end` ``']
   ];
   for (const [source, expected] of examples) {
     const app = mount(source);
     app.click('code', 0, source.length);
     assert.equal(app.editor.value, expected);
-    assert.equal(app.editor.selectionStart, expected.length - source.length - (expected.length - source.length) / 2);
+    assert.equal(app.editor.selectionStart, expected.indexOf(source));
     assert.equal(app.editor.selectionEnd, app.editor.selectionStart + source.length);
   }
 });
