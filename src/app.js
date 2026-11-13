@@ -49,9 +49,18 @@
     if (!snippet) return;
     const start = editor.selectionStart, end = editor.selectionEnd;
     const selected = editor.value.slice(start, end) || snippet.fallback;
-    editor.setRangeText(`${snippet.prefix}${selected}${snippet.suffix}`, start, end, 'select');
+    // A blockquote must prefix every selected line, not just the first one.
+    const isMultilineQuote = button.dataset.insert === 'quote' && selected.includes('\n');
+    const replacement = isMultilineQuote
+      ? selected.split('\n').map(line => '> ' + line).join('\n')
+      : `${snippet.prefix}${selected}${snippet.suffix}`;
+    editor.setRangeText(replacement, start, end, 'select');
     editor.focus();
-    editor.setSelectionRange(start + snippet.prefix.length, start + snippet.prefix.length + selected.length);
+    if (isMultilineQuote) {
+      editor.setSelectionRange(start, start + replacement.length);
+    } else {
+      editor.setSelectionRange(start + snippet.prefix.length, start + snippet.prefix.length + selected.length);
+    }
     editor.dispatchEvent(new Event('input', { bubbles: true }));
 
   });
