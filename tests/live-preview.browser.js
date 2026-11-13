@@ -222,6 +222,12 @@
     preview.querySelectorAll('code').length === 0 &&
     preview.querySelector('p')?.textContent === 'Prefix ' + unmatchedLongCode + ' שלום' &&
     status.textContent === 'Preview up to date');
+  const veryLongTicks = '`'.repeat(12000);
+  input('Prefix ' + veryLongTicks + ' שלום');
+  check('very long unmatched Code run remains literal and finishes preview',
+    preview.querySelectorAll('code').length === 0 &&
+    preview.querySelector('p')?.textContent === 'Prefix ' + veryLongTicks + ' שלום' &&
+    status.textContent === 'Preview up to date');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
