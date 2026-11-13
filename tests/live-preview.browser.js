@@ -178,6 +178,12 @@
     trailingPipeCells.length === 2 &&
     trailingPipeCells[1].textContent === 'שלום|' &&
     getComputedStyle(trailingPipeCells[1]).direction === 'rtl');
+  input('| A | B |\n| --- | --- |\n| \\``a|b` | שלום |');
+  const escapedTickCells = preview.querySelectorAll('tbody td');
+  check('escaped leading backtick keeps following Code span in one table cell',
+    escapedTickCells.length === 2 &&
+    escapedTickCells[0].querySelector('code')?.textContent === 'a|b' &&
+    escapedTickCells[1].textContent === 'שלום');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
