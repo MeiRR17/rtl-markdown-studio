@@ -39,11 +39,11 @@ jobs:
             exit 1
           fi
           output="$PWD/v4-blockquote-dom.html"
-          "$browser" --headless --no-sandbox --disable-gpu \
+          timeout 45s "$browser" --headless --no-sandbox --disable-gpu \
             --disable-dev-shm-usage --virtual-time-budget=5000 \
             --dump-dom "file://$PWD/tests/blockquote.browser.html" > "$output"
           # Capture evidence even if an assertion fails, so CI failures are diagnosable.
-          "$browser" --headless --no-sandbox --disable-gpu \
+          timeout 45s "$browser" --headless --no-sandbox --disable-gpu \
             --disable-dev-shm-usage --virtual-time-budget=5000 \
             --window-size=1100,800 \
             --screenshot="$PWD/v4-browser-regression.png" \
@@ -65,11 +65,11 @@ jobs:
             exit 1
           fi
           output="$PWD/v4-live-preview-dom.html"
-          "$browser" --headless --no-sandbox --disable-gpu \
+          timeout 45s "$browser" --headless --no-sandbox --disable-gpu \
             --disable-dev-shm-usage --virtual-time-budget=5000 \
             --dump-dom "file://$PWD/tests/live-preview.browser.html" > "$output"
           # Preserve the rendered editor/preview fixture for visual inspection.
-          "$browser" --headless --no-sandbox --disable-gpu \
+          timeout 45s "$browser" --headless --no-sandbox --disable-gpu \
             --disable-dev-shm-usage --virtual-time-budget=5000 \
             --window-size=1100,900 --screenshot="$PWD/v4-live-preview.png" \
             "file://$PWD/tests/live-preview.browser.html"
