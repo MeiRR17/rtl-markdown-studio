@@ -94,3 +94,12 @@ test('browser companion keeps literal backslashes in table Code spans', () => {
   assert.equal((html.match(/<td /g)||[]).length,2,code);
  }
 });
+
+test('browser companion keeps escaped first tick and a code span in one table cell', () => {
+ for (const code of ['\\``a|b`','\\```a|b``']) {
+  const source='| A | B |\n| --- | --- |\n| '+code+' | שלום |';
+  const html=browser.window.RTLMarkdown.renderMarkdown(source);
+  assert.equal(html,renderMarkdown(source),code);
+  assert.equal((html.match(/<td /g)||[]).length,2,code);
+ }
+});
