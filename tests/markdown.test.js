@@ -63,7 +63,7 @@ test('independent table cells and neutral text', () => {
 test('safe links markup and code fences with direction', () => {
  const html=renderMarkdown('[שלום](https://example.com?q=1) and English\n\n```html\n<script>alert(1)</script>\n```');
  assert.match(html, /<p dir="auto"><a href="https:\/\/example.com\?q=1">שלום<\/a> and English<\/p>/);
- assert.match(html, /<pre><code>&lt;script&gt;alert\(1\)&lt;\/script&gt;<\/code><\/pre>/);
+ assert.match(html, /<pre dir="ltr"><code>&lt;script&gt;alert\(1\)&lt;\/script&gt;<\/code><\/pre>/);
  assert.doesNotMatch(html, /<script>/);
 });
 
