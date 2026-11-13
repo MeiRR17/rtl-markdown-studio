@@ -91,6 +91,24 @@
   document.querySelector('.toolbar button[data-insert="quote"]').click();
   check('selection ending at next line start leaves that line untouched',
     editor.value === '> first\nsecond\nthird');
+  input('Hello heading');
+  editor.setSelectionRange(3, 3);
+  document.querySelector('.toolbar button[data-insert="heading"]').click();
+  check('Heading at mid-line caret formats entire line',
+    editor.value === '## Hello heading' &&
+    preview.querySelector('h2')?.textContent === 'Hello heading');
+  input('שלום list\nEnglish item\nuntouched');
+  editor.setSelectionRange(3, 21);
+  document.querySelector('.toolbar button[data-insert="list"]').click();
+  check('List formats complete touched lines',
+    editor.value === '- שלום list\n- English item\nuntouched' &&
+    preview.querySelectorAll('li').length === 2);
+  input('Hello code');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="code"]').click();
+  check('Code remains inline rather than line-prefix formatting',
+    editor.value === '`Hello code`' &&
+    preview.querySelector('p code')?.textContent === 'Hello code');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
