@@ -87,15 +87,17 @@ function inline(s, depth=0) {
   }
   return out;
 }
-// Browser dir=auto uses visible first-strong text, independently for each block.
-// A deterministic LTR fallback prevents numeric-only text inheriting RTL context.
-const directionAttribute = text => ' dir="' + (firstStrongDirection(text) ? 'auto' : 'ltr') + '"';
-// Determine the container direction from visible inline text, not hidden link URLs.
-const quoteTextDirection = source => {
-  const visible = inline(source).replace(/<[^>]*>/g, '').replace(/&(?:amp|lt|gt|quot|#39);/g, entity =>
+// Direction must use visible characters: link destinations and Markdown
+// delimiters do not contribute strong text to the rendered block.
+const visibleInlineText = source => inline(source)
+  .replace(/<[^>]*>/g, '')
+  .replace(/&(?:amp|lt|gt|quot|#39);/g, entity =>
     ({'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&#39;':"'"})[entity]);
-  return firstStrongDirection(visible) ?? 'ltr';
-};
+// A neutral-only block must stay LTR even inside an RTL quotation.
+const directionAttribute = text => ' dir="' +
+  (firstStrongDirection(visibleInlineText(text)) ? 'auto' : 'ltr') + '"';
+const quoteTextDirection = source =>
+  firstStrongDirection(visibleInlineText(source)) ?? 'ltr';
 
 const fence=s=>/^ {0,3}(`{3,}|~{3,})(.*)$/.exec(s);
 const heading=s=>/^ {0,3}(#{1,6})(?:[ \t]+(.*)|[ \t]*)$/.exec(s);
