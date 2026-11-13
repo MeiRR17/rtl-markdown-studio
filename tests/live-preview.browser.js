@@ -168,6 +168,10 @@
     unmatchedCodeCells[0].textContent === '`a' &&
     unmatchedCodeCells[1].textContent === 'b' &&
     unmatchedCodeCells[2].textContent === 'שלום');
+  input('`a``b`');
+  check('inline Code requires exact closing backtick-run length',
+    preview.querySelectorAll('p code').length === 1 &&
+    preview.querySelector('p code')?.textContent === 'a``b');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
