@@ -85,3 +85,12 @@ test('browser companion matches table scan with many unpaired runs', () => {
  assert.equal(browser.window.RTLMarkdown.renderMarkdown(markdown), renderMarkdown(markdown));
  assert.equal((renderMarkdown(markdown).match(/<td /g) || []).length, 2);
 });
+
+test('browser companion keeps literal backslashes in table Code spans', () => {
+ for(const code of ['`a\\|b`','``a\\|b``','`a|b`']) {
+  const input='| A | B |\n| --- | --- |\n| '+code+' | שלום |';
+  const html=browser.window.RTLMarkdown.renderMarkdown(input);
+  assert.equal(html,renderMarkdown(input));
+  assert.equal((html.match(/<td /g)||[]).length,2,code);
+ }
+});
