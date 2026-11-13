@@ -114,7 +114,11 @@ function cells(line){
       if(c==='`'){
         let j=i+1;
         while(source[j]==='`')j++;
-        remaining.set(j-i,(remaining.get(j-i)||0)-1);
+        // Only the first tick is escaped. Remaining adjacent ticks can
+        // open a code span and must retain their own run-length count.
+        const length=j-i;
+        remaining.set(length,(remaining.get(length)||0)-1);
+        if(length>1)remaining.set(length-1,(remaining.get(length-1)||0)+1);
       }
       v+='\\'+c;slash=false;i++;continue;
     }
