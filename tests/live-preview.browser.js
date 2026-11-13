@@ -145,8 +145,9 @@
     // tests…". Preserve passed checks and expose the failure in CI DOM dumps.
     const message = 'FAIL: uncaught fixture error — ' + String(error?.message ?? error);
     const messages = [...tests, message];
-    results.textContent = messages.join('\n') + '\n1+ failures';
-    results.dataset.failures = String(messages.filter(line => line.startsWith('FAIL:')).length);
+    const failures = messages.filter(line => line.startsWith('FAIL:')).length;
+    results.textContent = messages.join('\n') + '\n' + failures + ' failures';
+    results.dataset.failures = String(failures);
     results.dataset.executed = String(tests.length);
     document.title = 'FAIL — v4 live preview';
   }
