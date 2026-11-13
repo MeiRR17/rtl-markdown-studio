@@ -141,6 +141,19 @@
     getComputedStyle(preview.querySelector('blockquote')).direction === 'rtl' &&
     neutralLinkParagraph?.getAttribute('dir') === 'ltr' &&
     getComputedStyle(neutralLinkParagraph).direction === 'ltr');
+  input('Use ``code`` here');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="code"]').click();
+  check('Code with double backticks remains inline',
+    editor.value === '```Use ``code`` here```' &&
+    preview.querySelector('p code')?.textContent === 'Use ``code`` here' &&
+    preview.querySelector('pre') === null);
+  input('`code`');
+  editor.setSelectionRange(0, editor.value.length);
+  document.querySelector('.toolbar button[data-insert="code"]').click();
+  check('Code with edge backticks preserves literal delimiters',
+    editor.value === '`` `code` ``' &&
+    preview.querySelector('p code')?.textContent === '`code`');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
