@@ -144,3 +144,14 @@ test('browser companion keeps indexed bracket matching equivalent', () => {
   assert.equal(browser.window.RTLMarkdown.renderMarkdown(markdown), renderMarkdown(markdown));
  }
 });
+
+test('browser renderer preserves links containing bracket Code spans', () => {
+ for (const source of [
+  '[text `]` after](https://example.com)',
+  '[text `[` after](https://example.com)',
+  '[שלום `]` end](https://example.com)',
+  '[text ``]` after](https://example.com)'
+ ]) {
+  assert.equal(browser.window.RTLMarkdown.renderMarkdown(source),renderMarkdown(source));
+ }
+});
