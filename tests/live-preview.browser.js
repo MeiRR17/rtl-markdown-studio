@@ -190,6 +190,12 @@
     unmatchedOpenerCells.length === 2 &&
     unmatchedOpenerCells[0].querySelector('code')?.textContent === 'x|y' &&
     unmatchedOpenerCells[1].textContent === 'שלום');
+  input('> שלום\n> ```js\n> const value = (1 + 2);\n> ```');
+  const nestedFencedCode = preview.querySelector('blockquote pre');
+  check('fenced Code keeps computed LTR direction within RTL quotation',
+    getComputedStyle(preview.querySelector('blockquote')).direction === 'rtl' &&
+    nestedFencedCode?.getAttribute('dir') === 'ltr' &&
+    getComputedStyle(nestedFencedCode).direction === 'ltr');
   const failures = tests.filter(line => line.startsWith('FAIL:')).length;
   results.textContent = tests.join('\n') + '\n' + failures + ' failures';
   results.dataset.failures = String(failures);
