@@ -1,0 +1,49 @@
+name: v4 Preview direction regression
+
+on:
+  push:
+    branches: [autopilot]
+    paths:
+      - 'src/markdown.js'
+      - 'src/direction.js'
+      - 'src/preview-runtime.js'
+      - 'src/app.js'
+      - 'styles.css'
+      - 'tests/**'
+      - '.github/workflows/v4-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Node regression suite
+        run: node --test tests/*.test.js
+      - name: Browser-computed blockquote direction
+        shell: bash
+        run: |
+          set -euo pipefail
+          browser="$(command -v google-chrome || command -v chromium || true)"
+          if [[ -z "$browser" ]]; then
+            echo "::error::Chrome/Chromium not installed on runner"
+            exit 1
+          fi
+          output="$(mktemp)"
+          trap 'rm -f "$output"' EXIT
+          "$browser" --headless --no-sandbox --disable-gpu \
+            --disable-dev-shm-usage --virtual-time-budget=5000 \
+            --dump-dom "file://$PWD/tests/blockquote.browser.html" > "$output"
+          if ! grep -q 'data-failures="0"' "$output"; then
+            echo "::error::Computed-style blockquote regression did not pass"
+            grep -E 'data-failures=|FAIL:|Running tests' "$output" || true
+            exit 1
+          fi
+          echo "Computed-style blockquote tests passed in $browser"
