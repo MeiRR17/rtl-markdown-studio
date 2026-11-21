@@ -1,5 +1,6 @@
 import { renderMarkdown, MAX_MARKDOWN } from './src/markdown.js';
 import { extractOutline } from './src/outline.js';
+import { findLiteralMatches, nextMatchIndex } from './src/search.js';
 
 const $ = id => document.getElementById(id);
 const source = $('source');
@@ -60,6 +61,49 @@ function saveDraft() {
     report('אחסון מקומי אינו זמין. שמור את המסמך בקובץ כדי למנוע אובדן מידע.', true);
   }
 }
+let literalResults = [];
+let literalSelection = -1;
+function updateSearch() {
+  literalSelection = -1;
+  const query = $('find-query').value;
+  try {
+    const result = findLiteralMatches(source.value, query);
+    literalResults = result.positions;
+    const enabled = literalResults.length > 0;
+    $('find-prev').disabled = !enabled;
+    $('find-next').disabled = !enabled;
+    $('find-result').textContent = !query ? 'הזינו טקסט לחיפוש בתוך קובץ המקור.' :
+      !enabled ? 'לא נמצאו התאמות מדויקות.' :
+      literalResults.length.toLocaleString('he-IL') + (result.truncated ? '+ ' : ' ') +
+        'התאמות · חיפוש מילולי מדויק, ללא החלפת טקסט.';
+  } catch (error) {
+    literalResults = [];
+    $('find-prev').disabled = $('find-next').disabled = true;
+    $('find-result').textContent = error.message;
+  }
+}
+function navigateSearch(reverse) {
+  if (!literalResults.length) return;
+  const caret = source.selectionStart;
+  let index;
+  if (literalSelection >= 0) {
+    index = (literalSelection + (reverse ? -1 : 1) + literalResults.length) % literalResults.length;
+  } else {
+    index = nextMatchIndex(literalResults, caret, reverse);
+  }
+  literalSelection = index;
+  const hit = literalResults[index];
+  source.focus();
+  source.setSelectionRange(hit.start, hit.end);
+  source.scrollIntoView({ block: 'center', behavior: 'auto' });
+  $('find-result').textContent = 'התאמה ' + (index + 1).toLocaleString('he-IL') +
+    ' מתוך ' + literalResults.length.toLocaleString('he-IL') +
+    ' · התווים סומנו בעורך.';
+}
+$('find-query').addEventListener('input', updateSearch);
+$('find-prev').addEventListener('click', () => navigateSearch(true));
+$('find-next').addEventListener('click', () => navigateSearch(false));
+
 let headings = [];
 function renderOutline() {
   const list = $('outline-items');
@@ -135,6 +179,7 @@ function updatePreview() {
 }
 function onInput() {
   editRevision++;
+  updateSearch();
   $('draft-status').textContent = 'שומר טיוטה…';
   updatePreview();
   if (saveTimer) clearTimeout(saveTimer);
@@ -247,6 +292,7 @@ document.addEventListener('keydown', event => {
   }
 });
 source.value = readPreference(STORAGE, EXAMPLE);
+updateSearch();
 const savedDir = readPreference(PREF_DIR, 'auto');
 $('direction').value = ['auto', 'rtl', 'ltr'].includes(savedDir) ? savedDir : 'auto';
 const savedSize = readPreference(PREF_SIZE, 'regular');
