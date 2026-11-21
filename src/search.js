@@ -33,10 +33,10 @@ export function nextMatchIndex(positions, selectionStart, reverse = false) {
   }
   if (reverse) {
     for (let i = positions.length - 1; i >= 0; i--) {
-      if (positions[i].start < selectionStart) return i;
+      if (positions[i].start <= selectionStart) return i;
     }
     return positions.length - 1;
   }
-  const i = positions.findIndex(match => match.start > selectionStart);
+  const i = positions.findIndex(match => match.start >= selectionStart);
   return i < 0 ? 0 : i;
 }
