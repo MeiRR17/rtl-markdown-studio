@@ -35,6 +35,8 @@ const EXAMPLE = [
 ].join('\n');
 let saveTimer = null;
 let updated = false;
+let editRevision = 0;
+let fileImportRevision = 0;
 
 function report(message, error = false) {
   $('message').textContent = message;
@@ -132,6 +134,7 @@ function updatePreview() {
   }
 }
 function onInput() {
+  editRevision++;
   $('draft-status').textContent = 'שומר טיוטה…';
   updatePreview();
   if (saveTimer) clearTimeout(saveTimer);
@@ -206,15 +209,29 @@ $('file').addEventListener('change', async event => {
   const file = event.target.files?.[0];
   event.target.value = '';
   if (!file) return;
-  if (file.size > MAX_MARKDOWN) { report('קובץ גדול מדי. המגבלה היא 200KB.', true); return; }
+  const request = ++fileImportRevision;
+  const revision = editRevision;
+  if (file.size > MAX_MARKDOWN) {
+    report('קובץ גדול מדי. המגבלה היא 200KB.', true);
+    return;
+  }
   try {
     const contents = await file.text();
+    // Never overwrite edits made while the browser was reading a file.
+    if (request !== fileImportRevision) return;
+    if (revision !== editRevision) {
+      report('המסמך השתנה במהלך קריאת הקובץ. הייבוא בוטל כדי לשמור על העריכה החדשה.', true);
+      return;
+    }
     if (contents.length > MAX_MARKDOWN) throw new RangeError('הקובץ חורג ממגבלת התווים.');
     if (source.value.trim() && !confirm('הייבוא יחליף את המסמך הנוכחי. להמשיך?')) return;
+    if (request !== fileImportRevision || revision !== editRevision) return;
     source.value = contents;
     onInput();
     saveDraft();
-  } catch (error) { report('ייבוא נכשל: ' + error.message, true); }
+  } catch (error) {
+    if (request === fileImportRevision) report('ייבוא נכשל: ' + error.message, true);
+  }
 });
 $('sample').addEventListener('click', () => {
   if (source.value.trim() && source.value !== EXAMPLE &&
