@@ -34,6 +34,15 @@
       <div><span class="eyebrow">03 / ניווט</span><h2 id="outline-heading">מבנה המסמך</h2></div>
       <span class="small-status" id="outline-count">0 כותרות</span>
     </div>
+    <div class="find-toolbar" role="search" aria-label="חיפוש מילולי במסמך">
+      <label for="find-query">חיפוש מדויק בעברית או באנגלית</label>
+      <div class="find-actions">
+        <input id="find-query" type="search" maxlength="120" autocomplete="off" spellcheck="false" placeholder="טקסט לחיפוש…" aria-describedby="find-result">
+        <button id="find-prev" type="button" class="text-button" disabled aria-label="התאמה קודמת">הקודם</button>
+        <button id="find-next" type="button" class="text-button" disabled aria-label="התאמה הבאה">הבא</button>
+      </div>
+      <p id="find-result" role="status" aria-live="polite">הזינו טקסט לחיפוש בתוך קובץ המקור.</p>
+    </div>
     <p class="outline-hint">לחיצה על כותרת תעביר את סמן העריכה לשורת המקור המתאימה. כותרות בתוך בלוקי קוד אינן נכללות.</p>
     <nav aria-label="ניווט בכותרות המסמך"><ol id="outline-items" class="outline-items"></ol></nav>
   </section>
