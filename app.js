@@ -1,4 +1,5 @@
 import { renderMarkdown, MAX_MARKDOWN } from './src/markdown.js';
+import { extractOutline } from './src/outline.js';
 
 const $ = id => document.getElementById(id);
 const source = $('source');
@@ -57,8 +58,58 @@ function saveDraft() {
     report('אחסון מקומי אינו זמין. שמור את המסמך בקובץ כדי למנוע אובדן מידע.', true);
   }
 }
+let headings = [];
+function renderOutline() {
+  const list = $('outline-items');
+  list.replaceChildren();
+  try {
+    headings = extractOutline(source.value);
+    $('outline-count').textContent = headings.length.toLocaleString('he-IL') + ' כותרות';
+    if (!headings.length) {
+      const empty = document.createElement('li');
+      empty.className = 'outline-empty';
+      empty.textContent = 'לא נמצאו כותרות Markdown במסמך.';
+      list.append(empty);
+      return;
+    }
+    const nodes = document.createDocumentFragment();
+    headings.forEach((heading, index) => {
+      const li = document.createElement('li');
+      li.style.setProperty('--heading-level', String(heading.level - 1));
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'outline-link';
+      button.dir = 'auto';
+      button.dataset.headingIndex = String(index);
+      button.textContent = heading.text;
+      button.title = 'שורה ' + heading.line;
+      const line = document.createElement('small');
+      line.textContent = 'שורה ' + heading.line;
+      li.append(button, line);
+      nodes.append(li);
+    });
+    list.append(nodes);
+  } catch (error) {
+    headings = [];
+    $('outline-count').textContent = 'המבנה אינו זמין';
+    const li = document.createElement('li');
+    li.className = 'outline-empty';
+    li.textContent = error.message;
+    list.append(li);
+  }
+}
+$('outline-items').addEventListener('click', event => {
+  const button = event.target.closest('button[data-heading-index]');
+  if (!button) return;
+  const heading = headings[Number(button.dataset.headingIndex)];
+  if (!heading) return;
+  source.focus();
+  source.setSelectionRange(heading.offset, heading.offset);
+});
+
 function updatePreview() {
   const input = source.value;
+  renderOutline();
   $('statistics').textContent = input.length.toLocaleString('he-IL') + ' תווים';
   const words = input.trim().split(/\s+/u).filter(Boolean).length;
   $('word-count').textContent = words.toLocaleString('he-IL') + ' מילים';
