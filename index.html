@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#13243e">
+<meta name="description" content="עורך Markdown לעברית ולאנגלית, עם תצוגה מקדימה בטוחה, כיווניות אוטומטית ושמירה מקומית.">
+<title>RTL Markdown Studio — Markdown בעברית ובאנגלית</title>
+<link rel="stylesheet" href="./styles.css"><script type="module" src="./app.js"></script>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="./"><span class="mark" aria-hidden="true">¶</span><strong>RTL <span>Markdown</span></strong><small>studio</small></a><a href="https://github.com/MeiRR17/rtl-markdown-studio" target="_blank" rel="noopener noreferrer" class="repo-link">GitHub ↗</a></header>
+<main class="shell">
+  <section class="intro">
+    <div class="eyebrow">כתיבה דו־לשונית · בלי התקנה · בלי מעקב</div>
+    <div class="intro-row"><div><h1>Markdown שמבין <em>עברית.</em></h1><p>כותבים בעברית, English ובקוד באותו המסמך. לכל פסקה כיווניות משלה — עם תצוגה חיה וייצוא בטוח.</p></div>
+      <div class="intro-actions"><button type="button" class="button secondary" id="import">↑ ייבוא קובץ</button><input id="file" type="file" accept=".md,.markdown,.txt,text/plain" hidden><button type="button" class="button primary" id="download">↓ שמירת Markdown</button></div></div>
+  </section>
+  <div id="message" class="message" role="status" aria-live="polite"></div>
+  <section class="toolbar" aria-label="הגדרות עורך">
+    <div class="toolbar-group"><label for="direction">כיווניות תצוגה</label><select id="direction"><option value="auto" selected>אוטומטית לכל פסקה</option><option value="rtl">מימין לשמאל</option><option value="ltr">משמאל לימין</option></select></div>
+    <div class="toolbar-group"><label for="font-size">גודל טקסט</label><select id="font-size"><option value="regular">רגיל</option><option value="large">גדול</option></select></div>
+    <span class="toolbar-grow"></span><button id="sample" type="button" class="text-button">טעינת דוגמה</button><button id="copy-html" type="button" class="text-button">העתקת HTML</button><button id="export-html" type="button" class="text-button">ייצוא HTML</button><button id="print" type="button" class="text-button">הדפסה / PDF</button>
+  </section>
+  <div class="workspace">
+    <section class="editor panel" aria-labelledby="editor-title"><div class="panel-heading"><div><span class="eyebrow">01 / כתיבה</span><h2 id="editor-title">Markdown</h2></div><span class="small-status" id="draft-status">טיוטה מקומית</span></div>
+      <label class="sr-only" for="source">תוכן Markdown</label><textarea id="source" rows="20" dir="auto" spellcheck="true" placeholder="# כותרת בעברית&#10;&#10;Write your notes here..."></textarea>
+      <div class="panel-foot"><span id="editor-hint">Tab מוסיף הזחה · Ctrl / ⌘ + S שומר קובץ</span><span id="statistics">0 תווים</span></div></section>
+    <section class="viewer panel" aria-labelledby="viewer-title"><div class="panel-heading"><div><span class="eyebrow">02 / תצוגה</span><h2 id="viewer-title">תצוגה מקדימה חיה</h2></div><span class="small-status">HTML בטוח</span></div>
+      <article class="preview-content" id="preview" aria-live="polite"></article>
+      <div class="panel-foot"><span>כיווניות נפרדת לכותרות, פסקאות ורשימות</span><span id="word-count">0 מילים</span></div></section>
+  </div>
+  <section class="outline-panel panel" aria-labelledby="outline-heading">
+    <div class="panel-heading">
+      <div><span class="eyebrow">03 / ניווט</span><h2 id="outline-heading">מבנה המסמך</h2></div>
+      <span class="small-status" id="outline-count">0 כותרות</span>
+    </div>
+    <div class="find-toolbar" role="search" aria-label="חיפוש מילולי במסמך">
+      <label for="find-query">חיפוש מדויק בעברית או באנגלית</label>
+      <div class="find-actions">
+        <input id="find-query" type="search" maxlength="120" autocomplete="off" spellcheck="false" placeholder="טקסט לחיפוש…" aria-describedby="find-result">
+        <button id="find-prev" type="button" class="text-button" disabled aria-label="התאמה קודמת">הקודם</button>
+        <button id="find-next" type="button" class="text-button" disabled aria-label="התאמה הבאה">הבא</button>
+      </div>
+      <p id="find-result" role="status" aria-live="polite">הזינו טקסט לחיפוש בתוך קובץ המקור.</p>
+    </div>
+    <p class="outline-hint">לחיצה על כותרת תעביר את סמן העריכה לשורת המקור המתאימה. כותרות בתוך בלוקי קוד אינן נכללות.</p>
+    <nav aria-label="ניווט בכותרות המסמך"><ol id="outline-items" class="outline-items"></ol></nav>
+  </section>
+  <section class="features"><article><span>↔</span><h3>כיווניות מדויקת</h3><p>כיווניות נקבעת לפי התו המשמעותי הראשון בכל בלוק. קטעי קוד מוצגים תמיד משמאל לימין.</p></article><article><span>◈</span><h3>שמירה מקומית</h3><p>טיוטת המסמך נשמרת בדפדפן עצמו. אפשר לייצא Markdown או HTML ללא שרת.</p></article><article><span>✓</span><h3>בלי הזרקת HTML</h3><p>העורך יוצר רכיבי DOM וטקסט באופן מבוקר; תגיות HTML מתוך המסמך אינן מתפרשות כקוד.</p></article></section>
+  <p class="privacy">המידע נשמר בדפדפן הנוכחי בלבד. קישורים נפתחים רק לאחר לחיצה. אין חשבון, טלמטריה או שליחת תוכן לשרת.</p>
+</main>
+<footer><span>RTL Markdown Studio · כלי קוד פתוח</span><span>פותח בידי <a href="https://github.com/MeiRR17" target="_blank" rel="noopener noreferrer">Meir Dvir</a></span></footer>
+</body></html>
